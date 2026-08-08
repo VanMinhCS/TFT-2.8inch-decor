@@ -1,0 +1,23 @@
+SET(SOURCES ui_WiFiSetting.c
+    ui_SettingTimeManually.c
+    ui_Welcome.c
+    ui_Calendar.c
+    ui_Time.c
+    ui_Screen1.c
+    ui.c
+    ui_comp_hook.c
+    ui_helpers.c
+    ui_events.cpp
+    ui_img_388382192.c
+    ui_img_1034907267.c
+    ui_img_calendar_png.c
+    ui_img_check_png.c
+    ui_img_thermometer_png.c
+    ui_img_humidity_png.c
+    ui_img_84851999.c
+    ui_img_night_png.c
+    ui_img_e64e7b6136a1e0cb7f04b9ab829ff3ff_png.c
+    ui_img_bc5a74564f30248025888e7f7f8e175b_png.c
+    ui_img_537571085.c)
+
+add_library(ui ${SOURCES})
