@@ -38,3 +38,24 @@ void scanWifiCall(lv_event_t * e)
 {
 	request_wifi_scan = true;
 }
+
+void groupKeyboard(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * ta = (lv_obj_t *)lv_event_get_target(e);
+
+    // Khi Joystick nhấn ENTER vào ô này
+    if (code == LV_EVENT_CLICKED) { 
+        // Hiện bàn phím và liên kết nó với ô Password
+        lv_obj_remove_flag(ui_Keyboard1, LV_OBJ_FLAG_HIDDEN); 
+        lv_keyboard_set_textarea(ui_Keyboard1, ta);
+
+        // BẮT BUỘC: Đưa bàn phím vào Group và gán Focus cho nó
+        lv_group_add_obj(joystick_group, ui_Keyboard1);
+        lv_group_focus_obj(ui_Keyboard1);
+
+		lv_group_set_editing(joystick_group, true);
+        
+        Serial.println("[KEYBOARD] Đã nhảy Focus vào Bàn phím ảo!");
+    }
+}

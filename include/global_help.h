@@ -85,7 +85,7 @@ typedef struct {
 }WeatherData;
 
 typedef struct {
-    char ssid_list[512];
+    char ssid_list[10240];
     int count;
 }WifiScanResult;
 

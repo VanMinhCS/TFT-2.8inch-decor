@@ -56,6 +56,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_y(ui_Panel7, -79);
     lv_obj_set_align(ui_Panel7, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel7, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_Panel7, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Panel7, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Panel7, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Panel7, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label3 = lv_label_create(ui_Panel7);
     lv_obj_set_width(ui_Label3, LV_SIZE_CONTENT);   /// 1
@@ -74,6 +78,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_align(ui_Button1, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_Button1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_Button1, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Button1, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Button1, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Button1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label4 = lv_label_create(ui_Button1);
     lv_obj_set_width(ui_Label4, 79);
@@ -92,6 +100,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_align(ui_Button2, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Button2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_Button2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_Button2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Button2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Button2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Button2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label5 = lv_label_create(ui_Button2);
     lv_obj_set_width(ui_Label5, 105);
@@ -110,6 +122,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_align(ui_Button3, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Button3, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_Button3, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Button3, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Button3, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Button3, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label6 = lv_label_create(ui_Button3);
     lv_obj_set_width(ui_Label6, 105);

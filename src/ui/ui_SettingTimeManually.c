@@ -12,20 +12,20 @@ lv_obj_t * ui_Spinbox2 = NULL;
 lv_obj_t * ui_colon = NULL;
 lv_obj_t * ui_HourLabel = NULL;
 lv_obj_t * ui_MinuteLabel = NULL;
+lv_obj_t * ui_TimeSetting = NULL;
 lv_obj_t * ui_Panel1 = NULL;
 lv_obj_t * ui_DaySetting = NULL;
+lv_obj_t * ui_CalendarButton = NULL;
 lv_obj_t * ui_SaveTimeButton = NULL;
 lv_obj_t * ui_SaveTime = NULL;
-lv_obj_t * ui_CalendarButton = NULL;
-lv_obj_t * ui_TimeSetting = NULL;
 lv_obj_t * ui_BackToWelcome2 = NULL;
 // event funtions
-void ui_event_SaveTimeButton(lv_event_t * e)
+void ui_event_TimeSetting(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
+        saveTimeManually(e);
     }
 }
 
@@ -38,12 +38,12 @@ void ui_event_CalendarButton(lv_event_t * e)
     }
 }
 
-void ui_event_TimeSetting(lv_event_t * e)
+void ui_event_SaveTimeButton(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        saveTimeManually(e);
+        _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
     }
 }
 
@@ -69,7 +69,7 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_x(ui_HourSetting, 0);
     lv_obj_set_y(ui_HourSetting, -70);
     lv_obj_set_align(ui_HourSetting, LV_ALIGN_CENTER);
-    lv_obj_remove_flag(ui_HourSetting, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_remove_flag(ui_HourSetting, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_outline_color(ui_HourSetting, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_HourSetting, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_HourSetting, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -125,6 +125,18 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_align(ui_MinuteLabel, LV_ALIGN_CENTER);
     lv_label_set_text(ui_MinuteLabel, "Minute");
 
+    ui_TimeSetting = lv_imagebutton_create(ui_SettingTimeManually);
+    lv_imagebutton_set_src(ui_TimeSetting, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_check_png, NULL);
+    lv_obj_set_width(ui_TimeSetting, 32);
+    lv_obj_set_height(ui_TimeSetting, 32);
+    lv_obj_set_x(ui_TimeSetting, 112);
+    lv_obj_set_y(ui_TimeSetting, -62);
+    lv_obj_set_align(ui_TimeSetting, LV_ALIGN_CENTER);
+    lv_obj_set_style_outline_color(ui_TimeSetting, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_TimeSetting, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_TimeSetting, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_TimeSetting, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
+
     ui_Panel1 = lv_obj_create(ui_SettingTimeManually);
     lv_obj_set_width(ui_Panel1, 310);
     lv_obj_set_height(ui_Panel1, 50);
@@ -136,6 +148,10 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_style_outline_opa(ui_Panel1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_Panel1, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_Panel1, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Panel1, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Panel1, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Panel1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_DaySetting = lv_label_create(ui_Panel1);
     lv_obj_set_width(ui_DaySetting, LV_SIZE_CONTENT);   /// 1
@@ -145,6 +161,18 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_align(ui_DaySetting, LV_ALIGN_CENTER);
     lv_label_set_text(ui_DaySetting, "02-08-2026");
     lv_obj_set_style_text_font(ui_DaySetting, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_CalendarButton = lv_imagebutton_create(ui_SettingTimeManually);
+    lv_imagebutton_set_src(ui_CalendarButton, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_calendar_png, NULL);
+    lv_obj_set_width(ui_CalendarButton, 32);
+    lv_obj_set_height(ui_CalendarButton, 32);
+    lv_obj_set_x(ui_CalendarButton, 115);
+    lv_obj_set_y(ui_CalendarButton, 12);
+    lv_obj_set_align(ui_CalendarButton, LV_ALIGN_CENTER);
+    lv_obj_set_style_outline_color(ui_CalendarButton, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_CalendarButton, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_CalendarButton, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_CalendarButton, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_SaveTimeButton = lv_button_create(ui_SettingTimeManually);
     lv_obj_set_width(ui_SaveTimeButton, 87);
@@ -163,6 +191,10 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_style_border_color(ui_SaveTimeButton, lv_color_hex(0x1200FF), LV_PART_MAIN | LV_STATE_FOCUSED);
     lv_obj_set_style_border_opa(ui_SaveTimeButton, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
     lv_obj_set_style_border_width(ui_SaveTimeButton, 1, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_color(ui_SaveTimeButton, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_SaveTimeButton, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_SaveTimeButton, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_SaveTimeButton, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_SaveTime = lv_label_create(ui_SaveTimeButton);
     lv_obj_set_width(ui_SaveTime, LV_SIZE_CONTENT);   /// 1
@@ -173,31 +205,19 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_style_text_opa(ui_SaveTime, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_SaveTime, &lv_font_montserrat_26, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_CalendarButton = lv_imagebutton_create(ui_SettingTimeManually);
-    lv_imagebutton_set_src(ui_CalendarButton, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_calendar_png, NULL);
-    lv_obj_set_width(ui_CalendarButton, 32);
-    lv_obj_set_height(ui_CalendarButton, 32);
-    lv_obj_set_x(ui_CalendarButton, 115);
-    lv_obj_set_y(ui_CalendarButton, 12);
-    lv_obj_set_align(ui_CalendarButton, LV_ALIGN_CENTER);
-
-    ui_TimeSetting = lv_imagebutton_create(ui_SettingTimeManually);
-    lv_imagebutton_set_src(ui_TimeSetting, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_check_png, NULL);
-    lv_obj_set_width(ui_TimeSetting, 32);
-    lv_obj_set_height(ui_TimeSetting, 32);
-    lv_obj_set_x(ui_TimeSetting, 112);
-    lv_obj_set_y(ui_TimeSetting, -62);
-    lv_obj_set_align(ui_TimeSetting, LV_ALIGN_CENTER);
-
     ui_BackToWelcome2 = lv_imagebutton_create(ui_SettingTimeManually);
     lv_imagebutton_set_src(ui_BackToWelcome2, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_388382192, NULL);
     lv_obj_set_width(ui_BackToWelcome2, 32);
     lv_obj_set_height(ui_BackToWelcome2, 32);
     lv_obj_set_align(ui_BackToWelcome2, LV_ALIGN_BOTTOM_LEFT);
+    lv_obj_set_style_outline_color(ui_BackToWelcome2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_BackToWelcome2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_BackToWelcome2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_BackToWelcome2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
-    lv_obj_add_event_cb(ui_SaveTimeButton, ui_event_SaveTimeButton, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_CalendarButton, ui_event_CalendarButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TimeSetting, ui_event_TimeSetting, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_CalendarButton, ui_event_CalendarButton, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_SaveTimeButton, ui_event_SaveTimeButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BackToWelcome2, ui_event_BackToWelcome2, LV_EVENT_ALL, NULL);
 
 }
@@ -214,12 +234,12 @@ void ui_SettingTimeManually_screen_destroy(void)
     ui_colon = NULL;
     ui_HourLabel = NULL;
     ui_MinuteLabel = NULL;
+    ui_TimeSetting = NULL;
     ui_Panel1 = NULL;
     ui_DaySetting = NULL;
+    ui_CalendarButton = NULL;
     ui_SaveTimeButton = NULL;
     ui_SaveTime = NULL;
-    ui_CalendarButton = NULL;
-    ui_TimeSetting = NULL;
     ui_BackToWelcome2 = NULL;
 
 }

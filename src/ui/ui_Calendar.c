@@ -32,6 +32,10 @@ void ui_Calendar_screen_init(void)
     lv_obj_set_width(ui_CalendarSetting, 320);
     lv_obj_set_height(ui_CalendarSetting, 240);
     lv_obj_set_align(ui_CalendarSetting, LV_ALIGN_CENTER);
+    lv_obj_set_style_outline_color(ui_CalendarSetting, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_CalendarSetting, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_CalendarSetting, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_CalendarSetting, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     lv_obj_add_event_cb(ui_CalendarSetting, ui_event_CalendarSetting, LV_EVENT_ALL, NULL);
 

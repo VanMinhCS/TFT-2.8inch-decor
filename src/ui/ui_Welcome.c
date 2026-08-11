@@ -62,6 +62,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_outline_opa(ui_Panel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_Panel2, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_Panel2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Panel2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Panel2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Panel2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label11 = lv_label_create(ui_Panel2);
     lv_obj_set_width(ui_Label11, 240);
@@ -82,6 +86,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_outline_opa(ui_Panel3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_Panel3, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_Panel3, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_Panel3, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_Panel3, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_Panel3, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label12 = lv_label_create(ui_Panel3);
     lv_obj_set_width(ui_Label12, LV_SIZE_CONTENT);   /// 1
@@ -104,6 +112,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_outline_opa(ui_SettingOption1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_SettingOption1, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_SettingOption1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_SettingOption1, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_SettingOption1, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_SettingOption1, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_SettingOption1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label1 = lv_label_create(ui_SettingOption1);
     lv_obj_set_width(ui_Label1, 155);
@@ -126,6 +138,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_SettingOption2, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_SettingOption2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_SettingOption2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label2 = lv_label_create(ui_SettingOption2);
     lv_obj_set_width(ui_Label2, 155);

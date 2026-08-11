@@ -11,8 +11,8 @@ SET(SOURCES ui_Welcome.c
     ui_helpers.c
     ui_events.cpp
     ui_img_388382192.c
-    ui_img_calendar_png.c
     ui_img_check_png.c
+    ui_img_calendar_png.c
     ui_img_thermometer_png.c
     ui_img_humidity_png.c
     ui_img_84851999.c

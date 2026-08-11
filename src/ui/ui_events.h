@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 void scanWifiCall(lv_event_t * e);
+void groupKeyboard(lv_event_t * e);
 void connectWifFi(lv_event_t * e);
 void saveTimeManually(lv_event_t * e);
 void SetDayManually(lv_event_t * e);

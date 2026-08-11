@@ -11,31 +11,38 @@ volatile bool request_wifi_scan = false;
 lv_group_t * joystick_group = nullptr;
 lv_obj_t * main_screens[NUM_MAIN_SCREENS] = {nullptr};
 
-void auto_load_screen_widgets(lv_obj_t * screen_obj) {
-    // 1. Xóa sạch Widget cũ trong Group
-    lv_group_remove_all_objs(joystick_group);
-
-    if (screen_obj == NULL) return;
-
-    // 2. Đếm số phần tử con của Màn hình này
-    uint32_t child_cnt = lv_obj_get_child_cnt(screen_obj);
-
-    // 3. Tự động thêm các Widget tương tác được vào Joystick Group
-    uint32_t count = 0;
+static void collect_widgets_recursive(lv_obj_t * parent, uint32_t &count, lv_obj_t *&first_widget) {
+    uint32_t child_cnt = lv_obj_get_child_cnt(parent);
     for (uint32_t i = 0; i < child_cnt; i++) {
-        lv_obj_t * child = lv_obj_get_child(screen_obj, i);
+        lv_obj_t * child = lv_obj_get_child(parent, i);
+        if (lv_obj_has_flag(child, LV_OBJ_FLAG_HIDDEN)) continue;
 
-        // Chỉ thêm nếu Widget đó có cờ CLICKABLE (Bấm được) 
-        // và KHÔNG BỊ ẨN (LV_OBJ_FLAG_HIDDEN)
-        if (lv_obj_has_flag(child, LV_OBJ_FLAG_CLICKABLE) && 
-           !lv_obj_has_flag(child, LV_OBJ_FLAG_HIDDEN)) 
-        {
+        bool is_clickable = lv_obj_has_flag(child, LV_OBJ_FLAG_CLICKABLE);
+        if (is_clickable) {
             lv_group_add_obj(joystick_group, child);
+            lv_obj_remove_event_cb(child, joystick_event_handler);
+            lv_obj_add_event_cb(child, joystick_event_handler, LV_EVENT_ALL, NULL);
+            if (first_widget == NULL) first_widget = child;
             count++;
         }
+        // Chỉ đệ quy tiếp nếu bản thân nó KHÔNG phải widget clickable "trọn gói"
+        // (Container/Panel thì đệ quy vào trong; Button/Dropdown/Calendar thì dừng lại)
+        if (!is_clickable) {
+            collect_widgets_recursive(child, count, first_widget);
+        }
     }
+}
 
-    Serial.printf("[AUTO] Đã tự động nạp %d/%d Widget của màn hình vào Joystick!\n", count, child_cnt);
+void auto_load_screen_widgets(lv_obj_t * screen_obj) {
+    lv_group_remove_all_objs(joystick_group);
+    if (screen_obj == NULL) return;
+
+    uint32_t count = 0;
+    lv_obj_t * first_widget = NULL;
+    collect_widgets_recursive(screen_obj, count, first_widget);
+
+    if (first_widget) lv_group_focus_obj(first_widget);
+    Serial.printf("[AUTO] Đã nạp %d Widget (đệ quy), focus vào %p\n", count, first_widget);
 }
 
 void navigate_to_main_screen(int new_index) {
@@ -64,6 +71,30 @@ void joystick_event_handler(lv_event_t * e) {
         Serial.println("[MODE] Thoát Widget. Đang chờ ngoài màn hình.");
         return;
     }
+    // Điều khiển ưidget
+    if (code == LV_EVENT_KEY && is_in_widget) {
+        uint32_t key = lv_indev_get_key(lv_indev_get_act());
+        lv_obj_t * focused = lv_group_get_focused(joystick_group);
+
+        bool let_widget_handle = false;
+        if (focused) {
+            if (lv_obj_check_type(focused, &lv_dropdown_class)) {
+                let_widget_handle = lv_dropdown_is_open(focused); // dropdown: chỉ nhường khi đang MỞ
+            } else if (lv_obj_check_type(focused, &lv_keyboard_class)   ||
+                    lv_obj_check_type(focused, &lv_buttonmatrix_class) ||
+                    lv_obj_check_type(focused, &lv_calendar_class)   ||
+                    lv_obj_check_type(focused, &lv_roller_class)     ||
+                    lv_obj_check_type(focused, &lv_spinbox_class)) 
+            {
+                let_widget_handle = true; // các widget này luôn tự quản lý UP/DOWN/LEFT/RIGHT khi đang focus
+            }
+        }
+
+        if (let_widget_handle) return;
+
+        if (key == LV_KEY_DOWN) { lv_group_focus_next(joystick_group); return; }
+        if (key == LV_KEY_UP)   { lv_group_focus_prev(joystick_group); return; }
+    }
 
     // -------------------------------------------------------------
     // 2. KHI ĐANG "ĐỨNG NGOÀI" MÀN HÌNH (Chưa chui vào Widget)
@@ -74,7 +105,7 @@ void joystick_event_handler(lv_event_t * e) {
         // A. NHẤN ENTER ĐỂ "CHUI VÀO" ĐIỀU KHIỂN (Cho mọi màn hình)
         if (key == LV_KEY_ENTER) {
             is_in_widget = true;
-            lv_group_remove_all_objs(joystick_group);
+            // lv_group_remove_all_objs(joystick_group);
             
             // Tự động quét và nạp widget của màn hình hiện tại
             auto_load_screen_widgets(lv_scr_act());
@@ -129,8 +160,8 @@ void setup_joystick_navigation(lv_indev_t * indev_joystick_driver) {
     lv_obj_add_event_cb(ui_SettingTimeManually, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_event_cb(ui_Calendar, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
 
-    is_decor_mode = true;
-    current_screen_index = 2; // ui_Time
+    // is_decor_mode = true;
+    // current_screen_index = 2; // ui_Time
     joystick_standby_mode();
 
 }
@@ -451,25 +482,78 @@ void connectWiFi(void *pvParameters)
 }
 
 void scanWiFi(void * pvParameters) {
+    // 🔴 1. ÉP CHUẨN STATION MODE: Chặn lỗi ESP32 tự nhớ trạng thái AP cũ
+    WiFi.mode(WIFI_STA);
+
     while (1) {
         if (request_wifi_scan) {
+            Serial.println("WiFi Scan Begin");
             request_wifi_scan = false;
-            int n = WiFi.scanNetworks();
-            WifiScanResult * result = (WifiScanResult*)malloc(sizeof(WifiScanResult));
-            result->count = n;
-            result->ssid_list[0] = '\0';
+            
+            // 🔴 2. Xóa cache đọng lại từ các lần quét thất bại trước đó
+            WiFi.scanDelete();
+            
+            // 🔴 3. Dừng auto-reconnect ngầm của lõi Arduino
+            WiFi.enableSTA(true);
 
-            if (n == 0) snprintf(result->ssid_list, sizeof(result->ssid_list), "Không tìm thấy Wi-Fi");
+            // Quét sóng (async = false, show_hidden = false, passive = false, max_ms_per_channel = 300ms)
+            int n = WiFi.scanNetworks(false, false, false, 300);
+            
+            WifiScanResult * result = (WifiScanResult*)malloc(sizeof(WifiScanResult));
+            if (result == NULL) {
+                Serial.println("Lỗi: Không đủ RAM để cấp phát!");
+                vTaskDelay(pdMS_TO_TICKS(1000));
+                continue;
+            }
+            
+            result->count = n;
+            result->ssid_list[0] = '\0'; 
+
+            // 🔴 4. Bắt lỗi phần cứng (Radio đang bận / Lỗi khởi tạo)
+            if (n < 0) {
+                Serial.printf("Lỗi phần cứng Radio (Mã lỗi: %d)\n", n);
+                snprintf(result->ssid_list, sizeof(result->ssid_list), "Lỗi Radio: %d", n);
+            } 
+            else if (n == 0) {
+                snprintf(result->ssid_list, sizeof(result->ssid_list), "Không tìm thấy Wi-Fi");
+            } 
             else {
+                int added_count = 0; 
+                
                 for (int i = 0; i < n; i++) {
-                    strcat(result->ssid_list, WiFi.SSID(i).c_str());
-                    if (i < n-1) strcat(result->ssid_list,"\n");
+                    String current_ssid = WiFi.SSID(i);
+                    
+                    if (current_ssid.length() == 0) continue;
+
+                    if (strlen(result->ssid_list) + current_ssid.length() + 2 >= sizeof(result->ssid_list)) {
+                        Serial.println("Cảnh báo: Đã cắt bớt danh sách Wi-Fi để chống tràn RAM!");
+                        break; 
+                    }
+
+                    if (added_count > 0) {
+                        strcat(result->ssid_list, "\n");
+                    }
+                    
+                    strcat(result->ssid_list, current_ssid.c_str());
+                    added_count++;
+                }
+                
+                if (added_count == 0) {
+                     snprintf(result->ssid_list, sizeof(result->ssid_list), "Không tìm thấy Wi-Fi");
                 }
             }
-            WiFi.scanDelete();
+            
+            // Giải phóng bộ đệm phần cứng sau khi lấy xong dữ liệu
+            WiFi.scanDelete(); 
+
+            Serial.println("--- Kết quả Scan ---");
+            Serial.println(result->ssid_list);
+            Serial.println("--------------------");
+
             lv_async_call(updateWiFiList, result);
         }
-        vTaskDelay(1000);
+        
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -530,7 +614,8 @@ void update_clock(lv_timer_t * timer) {
         lv_label_set_text_fmt(ui_SolarDay, "%02d-%02d-%04d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
         const char* weekdays[] = {"CN", "T2", "T3", "T4", "T5", "T6", "T7"};
         lv_label_set_text_fmt(ui_DOW, "%s", weekdays[time.tm_wday]);
-
+        lv_calendar_set_today_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1, time.tm_mday);
+        lv_calendar_set_showed_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1);
     }
 }
 
