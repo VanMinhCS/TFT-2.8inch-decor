@@ -139,6 +139,7 @@ void setup_joystick_navigation(lv_indev_t * indev_joystick_driver) {
     lv_obj_add_flag(dummy_obj, LV_OBJ_FLAG_HIDDEN); // Ẩn đi
     lv_group_add_obj(joystick_group, dummy_obj);
     lv_obj_add_event_cb(dummy_obj, joystick_event_handler, LV_EVENT_ALL, NULL);
+    lv_group_focus_obj(dummy_obj);
 
     // 4. Load Màn hình Clock xuất phát đầu tiên
     current_screen_index = 2; // Index của Clock
@@ -173,7 +174,7 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data) {
 
     uint32_t current_key = 0;
 
-    Serial.println("READ Joystick");
+    // Serial.println("READ Joystick");
 
     // 2. Xử lý Deadzone & Xác định phím hướng
     // Nếu vượt qua vùng chết (Abs(Val - Center) > Deadzone)
@@ -181,22 +182,22 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data) {
         
         // --- Trục X ---
         if (raw_x >= THRES_X_MAX) {
-            current_key = LV_KEY_UP;
-            Serial.println("UP");
-        } else if (raw_x <= THRES_X_MIN) {
             current_key = LV_KEY_DOWN;
-            Serial.println("DOWN");
+            Serial.printf("DOWN, RawX = %d\n", raw_x);
+        } else if (raw_x <= THRES_X_MIN) {
+            current_key = LV_KEY_UP;
+            Serial.printf("UP, RawX = %d\n", raw_x);
         }
         
         // --- Trục Y ---
         // (Nếu gạt đường chéo, trục Y sẽ ghi đè hoặc kết hợp tùy ưu tiên)
-        if (raw_y <= THRES_Y_MAX) {
+        if (raw_y >= THRES_Y_MAX) {
             current_key = LV_KEY_LEFT;
-            Serial.println("LEFT");
+            Serial.printf("LEFT, Rawy = %d\n", raw_y);
         } 
-        else if (raw_y >= THRES_Y_MIN) {
+        else if (raw_y <= THRES_Y_MIN) {
             current_key = LV_KEY_RIGHT;
-            Serial.println("RIGHT");
+            Serial.printf("RIGHT, Rawy = %d\n", raw_y);
         }
     } 
     
@@ -322,7 +323,7 @@ void getAPILunar(void *pvParameters) {
                 int year = doc["lunar"]["year"];
                 char * lunar = (char*)malloc(11);
                 if (lunar){
-                    snprintf(lunar, sizeof(lunar), "%02d - %02d - %d", &day, &month, &year);
+                    snprintf(lunar, sizeof(lunar), "%02d - %02d - %d", day, month, year);
                     lv_async_call(update_lunar_callback, lunar);
                 }
                 
@@ -463,7 +464,7 @@ void scanWiFi(void * pvParameters) {
             if (n == 0) snprintf(result->ssid_list, sizeof(result->ssid_list), "Không tìm thấy Wi-Fi");
             else {
                 for (int i = 0; i < n; i++) {
-                    strcat(result->ssid_list, WiFi.SSID().c_str());
+                    strcat(result->ssid_list, WiFi.SSID(i).c_str());
                     if (i < n-1) strcat(result->ssid_list,"\n");
                 }
             }
@@ -525,7 +526,7 @@ void setWeatherInfo(lv_timer_t * timer) {
 
 void update_clock(lv_timer_t * timer) {
     struct tm time;
-    if (getLocalTime(&time)) {
+    if (getLocalTime(&time, 5)) {
         lv_label_set_text_fmt(ui_Hour, "%02d:%02d", time.tm_hour, time.tm_min);
         lv_label_set_text_fmt(ui_Second, "%02d", time.tm_sec);
         lv_label_set_text_fmt(ui_SolarDay, "%02d-%02d-%04d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
@@ -548,11 +549,14 @@ void lvglTimerCreate() {
     lv_timer_create(setWeatherInfo, 30*60*1000, nullptr);
     lv_timer_create(update_clock, 1000, nullptr);
 }
-void lvgl_task (void * pvParameters) {
-    while (1)
-    {
+void lvgl_task(void * pvParameters) {
+    uint32_t last_tick = millis();
+    while (1) {
+        uint32_t now = millis();
+        lv_tick_inc(now - last_tick);   // cộng đúng số ms thực tế đã trôi qua
+        last_tick = now;
+
         lv_timer_handler();
         vTaskDelay(pdMS_TO_TICKS(5));
     }
-    
 }

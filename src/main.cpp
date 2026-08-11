@@ -12,6 +12,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Hello");
 
+  delay(500);
+
   joystick_init();
 
   lv_init();
@@ -40,14 +42,12 @@ void setup() {
   lv_indev_set_read_cb(indev_joystick, my_joystick_read);
   
   ui_init();
-  input_group = lv_group_create();
-  lv_indev_set_group(indev_joystick, input_group);
+  // input_group = lv_group_create();
+  // lv_indev_set_group(indev_joystick, input_group);
   
   setup_joystick_navigation(indev_joystick);
   
   lvglTimerCreate();
-
-  joystick_init();
 
   xTaskCreatePinnedToCore(lvgl_task, "LVGL_Main_Task", 4096, NULL, 2, NULL, 1);
   createTask();

@@ -8,8 +8,8 @@
 #include <TFT_eSPI.h>
 #include <WiFi.h>
 // Joystick
-const int pinVRx = 14;
-const int pinVRy = 12; 
+const int pinVRx = 8;
+const int pinVRy = 9; 
 const int pinSW = 10;
 
 #define ADC_CENTER_X     1930  
