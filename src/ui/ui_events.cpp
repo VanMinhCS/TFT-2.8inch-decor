@@ -4,18 +4,37 @@
 // Project name: TFT_28
 
 #include "ui.h"
+#include <global_help.h>
 
 void connectWifFi(lv_event_t * e)
 {
-	// Your code here
+	WiFiData wifiData;
+	lv_dropdown_get_selected_str(ui_WiFiList, wifiData.ssid, sizeof(wifiData.ssid));
+	strcpy(wifiData.pass, lv_textarea_get_text(ui_WiFiPass));
+	xQueueSend(WiFiInfo, &wifiData, portMAX_DELAY);
+	
 }
 
 void saveTimeManually(lv_event_t * e)
 {
-	// Your code here
+	int hourGet = lv_spinbox_get_value(ui_Spinbox1);
+	int minuteGet = lv_spinbox_get_value(ui_Spinbox2);
+	int secondGet = 0;
+
+	timeData time = {hourGet, minuteGet, secondGet};
+	xQueueSend(TimeHandle, &time, portMAX_DELAY);
 }
 
 void SetDayManually(lv_event_t * e)
 {
-	// Your code here
+	lv_calendar_date_t date;
+	lv_calendar_get_pressed_date(ui_Calendar1, &date);
+	dayData day = {(int)date.day, (int)date.month, (int)date.year};
+	lv_label_set_text_fmt(ui_DaySetting, "%02d-%02d-%04d", (int)day.day, (int)day.month, (int)day.year);
+	xQueueSend(DayHandle, &day, portMAX_DELAY);
+}
+
+void scanWifiCall(lv_event_t * e)
+{
+	request_wifi_scan = true;
 }

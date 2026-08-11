@@ -5,7 +5,7 @@
 
 #include "ui.h"
 
-lv_obj_t * ui_Screen1 = NULL;
+lv_obj_t * ui_Keqing = NULL;
 lv_obj_t * ui_Panel4 = NULL;
 lv_obj_t * ui_Panel5 = NULL;
 lv_obj_t * ui_Panel6 = NULL;
@@ -13,12 +13,12 @@ lv_obj_t * ui_Panel6 = NULL;
 
 // build funtions
 
-void ui_Screen1_screen_init(void)
+void ui_Keqing_screen_init(void)
 {
-    ui_Screen1 = lv_obj_create(NULL);
-    lv_obj_remove_flag(ui_Screen1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_Keqing = lv_obj_create(NULL);
+    lv_obj_remove_flag(ui_Keqing, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_Panel4 = lv_obj_create(ui_Screen1);
+    ui_Panel4 = lv_obj_create(ui_Keqing);
     lv_obj_set_width(ui_Panel4, 200);
     lv_obj_set_height(ui_Panel4, 240);
     lv_obj_set_x(ui_Panel4, -60);
@@ -33,7 +33,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_outline_width(ui_Panel4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Panel5 = lv_obj_create(ui_Screen1);
+    ui_Panel5 = lv_obj_create(ui_Keqing);
     lv_obj_set_width(ui_Panel5, 120);
     lv_obj_set_height(ui_Panel5, 120);
     lv_obj_set_x(ui_Panel5, 100);
@@ -46,7 +46,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_outline_width(ui_Panel5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Panel6 = lv_obj_create(ui_Screen1);
+    ui_Panel6 = lv_obj_create(ui_Keqing);
     lv_obj_set_width(ui_Panel6, 120);
     lv_obj_set_height(ui_Panel6, 120);
     lv_obj_set_x(ui_Panel6, 100);
@@ -61,12 +61,12 @@ void ui_Screen1_screen_init(void)
 
 }
 
-void ui_Screen1_screen_destroy(void)
+void ui_Keqing_screen_destroy(void)
 {
-    if(ui_Screen1) lv_obj_del(ui_Screen1);
+    if(ui_Keqing) lv_obj_del(ui_Keqing);
 
     // NULL screen variables
-    ui_Screen1 = NULL;
+    ui_Keqing = NULL;
     ui_Panel4 = NULL;
     ui_Panel5 = NULL;
     ui_Panel6 = NULL;

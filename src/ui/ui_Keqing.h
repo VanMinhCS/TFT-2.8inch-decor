@@ -3,17 +3,17 @@
 // LVGL version: 9.1.0
 // Project name: TFT_28
 
-#ifndef UI_SCREEN1_H
-#define UI_SCREEN1_H
+#ifndef UI_KEQING_H
+#define UI_KEQING_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// SCREEN: ui_Screen1
-extern void ui_Screen1_screen_init(void);
-extern void ui_Screen1_screen_destroy(void);
-extern lv_obj_t * ui_Screen1;
+// SCREEN: ui_Keqing
+extern void ui_Keqing_screen_init(void);
+extern void ui_Keqing_screen_destroy(void);
+extern lv_obj_t * ui_Keqing;
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_Panel5;
 extern lv_obj_t * ui_Panel6;

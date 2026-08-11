@@ -13,6 +13,7 @@ extern "C" {
 // SCREEN: ui_WiFiSetting
 extern void ui_WiFiSetting_screen_init(void);
 extern void ui_WiFiSetting_screen_destroy(void);
+extern void ui_event_WiFiSetting(lv_event_t * e);
 extern lv_obj_t * ui_WiFiSetting;
 extern lv_obj_t * ui_WiFiList;
 extern void ui_event_WiFiPass(lv_event_t * e);
@@ -24,6 +25,9 @@ extern void ui_event_BackToWelcome1(lv_event_t * e);
 extern lv_obj_t * ui_BackToWelcome1;
 extern void ui_event_Keyboard1(lv_event_t * e);
 extern lv_obj_t * ui_Keyboard1;
+extern void ui_event_MoveToClock(lv_event_t * e);
+extern lv_obj_t * ui_MoveToClock;
+extern lv_obj_t * ui_Label8;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

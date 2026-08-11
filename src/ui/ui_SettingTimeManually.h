@@ -25,7 +25,6 @@ extern lv_obj_t * ui_DaySetting;
 extern void ui_event_SaveTimeButton(lv_event_t * e);
 extern lv_obj_t * ui_SaveTimeButton;
 extern lv_obj_t * ui_SaveTime;
-extern lv_obj_t * ui_Image4;
 extern void ui_event_CalendarButton(lv_event_t * e);
 extern lv_obj_t * ui_CalendarButton;
 extern void ui_event_TimeSetting(lv_event_t * e);

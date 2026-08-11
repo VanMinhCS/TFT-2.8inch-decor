@@ -16,7 +16,6 @@ lv_obj_t * ui_Panel1 = NULL;
 lv_obj_t * ui_DaySetting = NULL;
 lv_obj_t * ui_SaveTimeButton = NULL;
 lv_obj_t * ui_SaveTime = NULL;
-lv_obj_t * ui_Image4 = NULL;
 lv_obj_t * ui_CalendarButton = NULL;
 lv_obj_t * ui_TimeSetting = NULL;
 lv_obj_t * ui_BackToWelcome2 = NULL;
@@ -148,15 +147,13 @@ void ui_SettingTimeManually_screen_init(void)
     lv_obj_set_style_text_font(ui_DaySetting, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SaveTimeButton = lv_button_create(ui_SettingTimeManually);
-    lv_obj_set_width(ui_SaveTimeButton, 235);
+    lv_obj_set_width(ui_SaveTimeButton, 87);
     lv_obj_set_height(ui_SaveTimeButton, 50);
     lv_obj_set_x(ui_SaveTimeButton, 0);
     lv_obj_set_y(ui_SaveTimeButton, 81);
     lv_obj_set_align(ui_SaveTimeButton, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_SaveTimeButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_SaveTimeButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_SaveTimeButton, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_SaveTimeButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_color(ui_SaveTimeButton, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_SaveTimeButton, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_SaveTimeButton, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -170,23 +167,11 @@ void ui_SettingTimeManually_screen_init(void)
     ui_SaveTime = lv_label_create(ui_SaveTimeButton);
     lv_obj_set_width(ui_SaveTime, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_SaveTime, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_SaveTime, -17);
-    lv_obj_set_y(ui_SaveTime, 0);
     lv_obj_set_align(ui_SaveTime, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_SaveTime, "Save and Exit");
+    lv_label_set_text(ui_SaveTime, "Exit");
     lv_obj_set_style_text_color(ui_SaveTime, lv_color_hex(0x060000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_SaveTime, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_SaveTime, &lv_font_montserrat_26, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_Image4 = lv_image_create(ui_SaveTimeButton);
-    lv_image_set_src(ui_Image4, &ui_img_1034907267);
-    lv_obj_set_width(ui_Image4, LV_SIZE_CONTENT);   /// 24
-    lv_obj_set_height(ui_Image4, LV_SIZE_CONTENT);    /// 24
-    lv_obj_set_x(ui_Image4, 94);
-    lv_obj_set_y(ui_Image4, 0);
-    lv_obj_set_align(ui_Image4, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image4, LV_OBJ_FLAG_CLICKABLE);     /// Flags
-    lv_obj_remove_flag(ui_Image4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_CalendarButton = lv_imagebutton_create(ui_SettingTimeManually);
     lv_imagebutton_set_src(ui_CalendarButton, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_calendar_png, NULL);
@@ -233,7 +218,6 @@ void ui_SettingTimeManually_screen_destroy(void)
     ui_DaySetting = NULL;
     ui_SaveTimeButton = NULL;
     ui_SaveTime = NULL;
-    ui_Image4 = NULL;
     ui_CalendarButton = NULL;
     ui_TimeSetting = NULL;
     ui_BackToWelcome2 = NULL;

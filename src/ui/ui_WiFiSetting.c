@@ -12,7 +12,18 @@ lv_obj_t * ui_ConnectButton = NULL;
 lv_obj_t * ui_ConnectText = NULL;
 lv_obj_t * ui_BackToWelcome1 = NULL;
 lv_obj_t * ui_Keyboard1 = NULL;
+lv_obj_t * ui_MoveToClock = NULL;
+lv_obj_t * ui_Label8 = NULL;
 // event funtions
+void ui_event_WiFiSetting(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_SCREEN_LOADED) {
+        scanWifiCall(e);
+    }
+}
+
 void ui_event_WiFiPass(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -29,6 +40,7 @@ void ui_event_ConnectButton(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         connectWifFi(e);
+        _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
     }
 }
 
@@ -50,6 +62,15 @@ void ui_event_Keyboard1(lv_event_t * e)
     }
 }
 
+void ui_event_MoveToClock(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
+    }
+}
+
 // build funtions
 
 void ui_WiFiSetting_screen_init(void)
@@ -58,7 +79,6 @@ void ui_WiFiSetting_screen_init(void)
     lv_obj_remove_flag(ui_WiFiSetting, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_WiFiList = lv_dropdown_create(ui_WiFiSetting);
-    lv_dropdown_set_options(ui_WiFiList, "Thanh Le\nVanMinhCS\nVanMinhIphone\nBruh");
     lv_obj_set_width(ui_WiFiList, 230);
     lv_obj_set_height(ui_WiFiList, LV_SIZE_CONTENT);    /// 3
     lv_obj_set_x(ui_WiFiList, 0);
@@ -119,11 +139,31 @@ void ui_WiFiSetting_screen_init(void)
     lv_obj_set_align(ui_Keyboard1, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Keyboard1, LV_OBJ_FLAG_HIDDEN);     /// Flags
 
+    ui_MoveToClock = lv_button_create(ui_WiFiSetting);
+    lv_obj_set_width(ui_MoveToClock, 230);
+    lv_obj_set_height(ui_MoveToClock, 50);
+    lv_obj_set_x(ui_MoveToClock, 0);
+    lv_obj_set_y(ui_MoveToClock, 70);
+    lv_obj_set_align(ui_MoveToClock, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_MoveToClock, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_MoveToClock, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_Label8 = lv_label_create(ui_MoveToClock);
+    lv_obj_set_width(ui_Label8, 220);
+    lv_obj_set_height(ui_Label8, 29);
+    lv_obj_set_align(ui_Label8, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label8, "WiFi is set, click here to move to clock screen");
+    lv_obj_set_style_text_color(ui_Label8, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Label8, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_Label8, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_WiFiPass, ui_event_WiFiPass, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ConnectButton, ui_event_ConnectButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BackToWelcome1, ui_event_BackToWelcome1, LV_EVENT_ALL, NULL);
     lv_keyboard_set_textarea(ui_Keyboard1, ui_WiFiPass);
     lv_obj_add_event_cb(ui_Keyboard1, ui_event_Keyboard1, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_MoveToClock, ui_event_MoveToClock, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_WiFiSetting, ui_event_WiFiSetting, LV_EVENT_ALL, NULL);
 
 }
 
@@ -139,5 +179,7 @@ void ui_WiFiSetting_screen_destroy(void)
     ui_ConnectText = NULL;
     ui_BackToWelcome1 = NULL;
     ui_Keyboard1 = NULL;
+    ui_MoveToClock = NULL;
+    ui_Label8 = NULL;
 
 }

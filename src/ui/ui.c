@@ -30,22 +30,26 @@ void ui_init(void)
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
+    ui_Welcome_screen_init();
     ui_WiFiSetting_screen_init();
     ui_SettingTimeManually_screen_init();
-    ui_Welcome_screen_init();
     ui_Calendar_screen_init();
     ui_Time_screen_init();
-    ui_Screen1_screen_init();
+    ui_Keqing_screen_init();
+    ui_Move_screen_init();
+    ui_Calendar1_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_WiFiSetting);
+    lv_disp_load_scr(ui_Welcome);
 }
 
 void ui_destroy(void)
 {
+    ui_Welcome_screen_destroy();
     ui_WiFiSetting_screen_destroy();
     ui_SettingTimeManually_screen_destroy();
-    ui_Welcome_screen_destroy();
     ui_Calendar_screen_destroy();
     ui_Time_screen_destroy();
-    ui_Screen1_screen_destroy();
+    ui_Keqing_screen_destroy();
+    ui_Move_screen_destroy();
+    ui_Calendar1_screen_destroy();
 }
