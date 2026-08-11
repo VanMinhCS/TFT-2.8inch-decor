@@ -46,10 +46,11 @@ void setup() {
   // lv_indev_set_group(indev_joystick, input_group);
   
   setup_joystick_navigation(indev_joystick);
+  lv_scr_load(ui_Welcome);
   
   lvglTimerCreate();
 
-  xTaskCreatePinnedToCore(lvgl_task, "LVGL_Main_Task", 4096, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(lvgl_task, "LVGL_Main_Task", 12288, NULL, 2, NULL, 1);
   createTask();
   
 }

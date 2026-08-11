@@ -13,7 +13,7 @@
 #define TFT_SCLK 7
 #define TFT_CS   4
 #define TFT_DC   5
-#define TFT_RST   -1  // Connect reset to ensure display initialises
+#define TFT_RST  -1  // Connect reset to ensure display initialises
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters

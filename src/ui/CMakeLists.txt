@@ -5,7 +5,7 @@ SET(SOURCES ui_Welcome.c
     ui_Time.c
     ui_Keqing.c
     ui_Move.c
-    ui_Calendar1.c
+    ui_CalendarDecor.c
     ui.c
     ui_comp_hook.c
     ui_helpers.c

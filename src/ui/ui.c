@@ -37,7 +37,7 @@ void ui_init(void)
     ui_Time_screen_init();
     ui_Keqing_screen_init();
     ui_Move_screen_init();
-    ui_Calendar1_screen_init();
+    ui_CalendarDecor_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_Welcome);
 }
@@ -51,5 +51,5 @@ void ui_destroy(void)
     ui_Time_screen_destroy();
     ui_Keqing_screen_destroy();
     ui_Move_screen_destroy();
-    ui_Calendar1_screen_destroy();
+    ui_CalendarDecor_screen_destroy();
 }

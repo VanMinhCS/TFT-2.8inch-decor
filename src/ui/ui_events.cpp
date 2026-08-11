@@ -28,7 +28,7 @@ void saveTimeManually(lv_event_t * e)
 void SetDayManually(lv_event_t * e)
 {
 	lv_calendar_date_t date;
-	lv_calendar_get_pressed_date(ui_Calendar1, &date);
+	lv_calendar_get_pressed_date(ui_CalendarSetting, &date);
 	dayData day = {(int)date.day, (int)date.month, (int)date.year};
 	lv_label_set_text_fmt(ui_DaySetting, "%02d-%02d-%04d", (int)day.day, (int)day.month, (int)day.year);
 	xQueueSend(DayHandle, &day, portMAX_DELAY);

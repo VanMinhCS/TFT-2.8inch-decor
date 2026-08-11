@@ -40,13 +40,9 @@ static const uint32_t screenHeight = 240;
 static uint8_t *draw_buf1;
 extern lv_group_t * input_group;
 
-enum ControlState {
-    STATE_NAVIGATE_SCREEN, // Chế độ 1: Duyệt giữa các màn hình
-    STATE_CONTROL_WIDGET,   // Chế độ 2: Thao tác với các Widget bên trong Screen
-    STATE_IN_SETTINGS
-};
+extern bool is_decor_mode;
+extern bool is_in_widget;
 
-extern ControlState current_state;
 extern lv_group_t * joystick_group;
 #define NUM_MAIN_SCREENS 4
 extern lv_obj_t * main_screens[NUM_MAIN_SCREENS]; 
@@ -55,8 +51,11 @@ extern int current_screen_index; // Mặc định xuất phát từ Clock (Index
 void auto_load_screen_widgets(lv_obj_t * screen_obj);
 void navigate_to_main_screen(int new_index);
 void joystick_event_handler(lv_event_t * e);
-void ui_generic_setting_screen_loaded_cb(lv_event_t * e);
+// void ui_generic_setting_screen_loaded_cb(lv_event_t * e);
 void setup_joystick_navigation(lv_indev_t * indev_joystick_driver);
+void joystick_standby_mode();
+void ui_event_Clock_Loaded(lv_event_t * e);
+void ui_event_SubScreen_Loaded(lv_event_t * e);
 
 // Global object for help, use to share between Core 0 and Core 1
 extern volatile bool request_wifi_scan;

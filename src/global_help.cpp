@@ -1,11 +1,13 @@
 #include <global_help.h>
 
+bool is_decor_mode = false;
+bool is_in_widget = false;
+
 int current_screen_index = 2;
 
 lv_group_t * input_group = nullptr;
 
 volatile bool request_wifi_scan = false;
-ControlState current_state = ControlState::STATE_NAVIGATE_SCREEN;
 lv_group_t * joystick_group = nullptr;
 lv_obj_t * main_screens[NUM_MAIN_SCREENS] = {nullptr};
 
@@ -19,6 +21,7 @@ void auto_load_screen_widgets(lv_obj_t * screen_obj) {
     uint32_t child_cnt = lv_obj_get_child_cnt(screen_obj);
 
     // 3. Tự động thêm các Widget tương tác được vào Joystick Group
+    uint32_t count = 0;
     for (uint32_t i = 0; i < child_cnt; i++) {
         lv_obj_t * child = lv_obj_get_child(screen_obj, i);
 
@@ -28,122 +31,145 @@ void auto_load_screen_widgets(lv_obj_t * screen_obj) {
            !lv_obj_has_flag(child, LV_OBJ_FLAG_HIDDEN)) 
         {
             lv_group_add_obj(joystick_group, child);
+            count++;
         }
     }
 
-    Serial.printf("[AUTO] Đã tự động nạp %d Widget của màn hình vào Joystick!\n", child_cnt);
+    Serial.printf("[AUTO] Đã tự động nạp %d/%d Widget của màn hình vào Joystick!\n", count, child_cnt);
 }
 
 void navigate_to_main_screen(int new_index) {
-    // Chặn biên: Không vượt quá Screen A (Index 0) hoặc Screen C (Index 3)
     if (new_index < 0 || new_index >= NUM_MAIN_SCREENS) return;
 
-    // Xác định hướng chạy hiệu ứng trượt màn hình
     lv_scr_load_anim_t anim_type = (new_index > current_screen_index) 
                                    ? LV_SCR_LOAD_ANIM_MOVE_LEFT 
                                    : LV_SCR_LOAD_ANIM_MOVE_RIGHT;
-
+                                   
     current_screen_index = new_index;
-
-    // Thực hiện chuyển màn hình mượt mà
     lv_scr_load_anim(main_screens[current_screen_index], anim_type, 300, 0, false);
     
-    Serial.printf("[NAV] Chuyển sang Màn hình chính Index: %d\n", current_screen_index);
+    // Thiết lập trạng thái chờ nhận phím cho màn hình mới
+    joystick_standby_mode();
+    Serial.printf("[NAV] Chuyển sang màn chính Index: %d\n", current_screen_index);
 }
 
 void joystick_event_handler(lv_event_t * e) {
     lv_event_code_t code = lv_event_get_code(e);
 
-    if (code == LV_EVENT_LONG_PRESSED) {
-        if (current_state == STATE_CONTROL_WIDGET) {
-            current_state = STATE_NAVIGATE_SCREEN;
-            lv_group_remove_all_objs(joystick_group); // Xóa Focus
-            Serial.println("[MODE] >>> THOÁT WIDGET! Quay lại Chế độ Duyệt Màn hình.");
-            return;
-        }
-
-        if (current_state == STATE_IN_SETTINGS) {
-            current_screen_index = 2; // Khôi phục về Index của Clock
-            current_state = STATE_NAVIGATE_SCREEN;
-            lv_group_remove_all_objs(joystick_group);
-            
-            lv_scr_load_anim(ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, false);
-            Serial.println("[MODE] >>> THOÁT SETTING! Quay về Màn hình Clock gốc.");
-            return;
-        }
+    // -------------------------------------------------------------
+    // 1. NHẤN GIỮ ĐỂ THOÁT WIDGET (Áp dụng cho mọi màn hình)
+    // -------------------------------------------------------------
+    if (code == LV_EVENT_LONG_PRESSED && is_in_widget) {
+        joystick_standby_mode();
+        Serial.println("[MODE] Thoát Widget. Đang chờ ngoài màn hình.");
+        return;
     }
 
-
-    if (code == LV_EVENT_KEY) {
+    // -------------------------------------------------------------
+    // 2. KHI ĐANG "ĐỨNG NGOÀI" MÀN HÌNH (Chưa chui vào Widget)
+    // -------------------------------------------------------------
+    if (code == LV_EVENT_KEY && !is_in_widget) {
         uint32_t key = lv_indev_get_key(lv_indev_get_act());
 
-        // A. Ý 4: NHẤN CLICK JOYSTICK (ENTER) -> CHUI VÀO WIDGET MÀN HÌNH HIỆN TẠI
-        if (key == LV_KEY_ENTER && current_state == STATE_NAVIGATE_SCREEN) {
-            current_state = STATE_CONTROL_WIDGET;
-
-            // Xóa sạch group và TỰ ĐỘNG NẠP WIDGET của màn hình hiện tại
+        // A. NHẤN ENTER ĐỂ "CHUI VÀO" ĐIỀU KHIỂN (Cho mọi màn hình)
+        if (key == LV_KEY_ENTER) {
+            is_in_widget = true;
             lv_group_remove_all_objs(joystick_group);
-            auto_load_screen_widgets(main_screens[current_screen_index]);
-
-            Serial.println("[MODE] >>> ĐÃ CHUI VÀO! Chuyển sang Chế độ Điều khiển Widget.");
+            
+            // Tự động quét và nạp widget của màn hình hiện tại
+            auto_load_screen_widgets(lv_scr_act());
+            Serial.println("[MODE] Đã chui vào điều khiển Widget.");
             return;
         }
 
-        // B. Ý 1 & 3: GẠT TRÁI / PHẢI KHI ĐANG Ở CHẾ ĐỘ DUYỆT MÀN HÌNH CHÍNH
-        if (current_state == STATE_NAVIGATE_SCREEN) {
-            if (key == LV_KEY_RIGHT) {
-                // Gạt Phải -> Chuyển màn hình kế tiếp (A -> B -> Clock -> C)
-                if (current_screen_index < NUM_MAIN_SCREENS - 1) {
-                    navigate_to_main_screen(current_screen_index + 1);
-                }
+        // B. GẠT TRÁI/PHẢI CHUYỂN MÀN (Chỉ có tác dụng nếu đang ở DECOR)
+        if (is_decor_mode) {
+            if (key == LV_KEY_RIGHT && current_screen_index < NUM_MAIN_SCREENS - 1) {
+                navigate_to_main_screen(current_screen_index + 1);
             } 
-            else if (key == LV_KEY_LEFT) {
-                // Gạt Trái -> Chuyển màn hình phía trước
-                if (current_screen_index > 0) {
-                    navigate_to_main_screen(current_screen_index - 1);
-                }
+            else if (key == LV_KEY_LEFT && current_screen_index > 0) {
+                navigate_to_main_screen(current_screen_index - 1);
             }
         }
     }
 }
 
-void ui_generic_setting_screen_loaded_cb(lv_event_t * e) {
-    if (lv_event_get_code(e) == LV_EVENT_SCREEN_LOADED) {
-        current_state = STATE_IN_SETTINGS;
+// void ui_generic_setting_screen_loaded_cb(lv_event_t * e) {
+//     if (lv_event_get_code(e) == LV_EVENT_SCREEN_LOADED) {
+//         current_state = STATE_IN_SETTINGS;
 
-        // Lấy con trỏ Màn hình Setting vừa mở
-        lv_obj_t * setting_screen = (lv_obj_t *)lv_event_get_target(e);
+//         // Lấy con trỏ Màn hình Setting vừa mở
+//         lv_obj_t * setting_screen = (lv_obj_t *)lv_event_get_target(e);
 
-        // Tự động nạp toàn bộ nút bấm trong Màn hình Setting đó vào Joystick
-        lv_group_remove_all_objs(joystick_group);
-        auto_load_screen_widgets(setting_screen);
+//         // Tự động nạp toàn bộ nút bấm trong Màn hình Setting đó vào Joystick
+//         lv_group_remove_all_objs(joystick_group);
+//         auto_load_screen_widgets(setting_screen);
 
-        Serial.println("[SETTING] Đã nạp tự động Widget của Màn hình Setting!");
-    }
-}
+//         Serial.println("[SETTING] Đã nạp tự động Widget của Màn hình Setting!");
+//     }
+// }
 
 void setup_joystick_navigation(lv_indev_t * indev_joystick_driver) {
-    // 1. Khai báo danh sách 4 màn hình chính theo thứ tự mảng
     main_screens[0] = ui_Move;
-    main_screens[1] = ui_Calendar1;
-    main_screens[2] = ui_Time; // Gốc
+    main_screens[1] = ui_CalendarDecor;
+    main_screens[2] = ui_Time; 
     main_screens[3] = ui_Keqing;
 
-    // 2. Tạo Group cho Joystick
     joystick_group = lv_group_create();
     lv_indev_set_group(indev_joystick_driver, joystick_group);
 
-    // 3. Đăng ký hàm xử lý sự kiện Joystick chính
-    // Ta gắn callback vào một Dummy Object để hứng toàn bộ sự kiện phím
-    lv_obj_t * dummy_obj = lv_obj_create(lv_scr_act());
-    lv_obj_add_flag(dummy_obj, LV_OBJ_FLAG_HIDDEN); // Ẩn đi
-    lv_group_add_obj(joystick_group, dummy_obj);
-    lv_obj_add_event_cb(dummy_obj, joystick_event_handler, LV_EVENT_ALL, NULL);
-    lv_group_focus_obj(dummy_obj);
+    // Đăng ký "Công tắc" cho ui_Time
+    lv_obj_add_event_cb(ui_Time, ui_event_Clock_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
 
-    // 4. Load Màn hình Clock xuất phát đầu tiên
-    current_screen_index = 2; // Index của Clock
-    current_state = ControlState::STATE_NAVIGATE_SCREEN;
+    // *Lưu ý: Bạn gọi tương tự lv_obj_add_event_cb(ui_SettingX, ui_event_SubScreen_Loaded...) 
+    // cho các màn hình phụ tại đây, hoặc cấu hình trực tiếp từ SquareLine Studio.
+
+    lv_obj_add_event_cb(ui_Welcome, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
+    lv_obj_add_event_cb(ui_WiFiSetting, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
+    lv_obj_add_event_cb(ui_SettingTimeManually, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
+    lv_obj_add_event_cb(ui_Calendar, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
+
+    is_decor_mode = true;
+    current_screen_index = 2; // ui_Time
+    joystick_standby_mode();
+
+}
+
+void joystick_standby_mode() {
+    is_in_widget = false;
+    lv_group_remove_all_objs(joystick_group);
+    
+    // Lấy màn hình đang hiển thị hiện tại
+    lv_obj_t * active_scr = lv_scr_act();
+    
+    // Ép màn hình trở thành đối tượng có thể nhận phím
+    lv_obj_add_flag(active_scr, LV_OBJ_FLAG_CLICKABLE); 
+    
+    // Tránh đăng ký trùng lặp sự kiện
+    lv_obj_remove_event_cb(active_scr, joystick_event_handler); 
+    lv_obj_add_event_cb(active_scr, joystick_event_handler, LV_EVENT_ALL, NULL);
+    
+    // Đưa màn hình vào Group để hứng lệnh Joystick
+    lv_group_add_obj(joystick_group, active_scr);
+}
+
+// 1. Gắn hàm này vào sự kiện LOADED của ui_Time
+void ui_event_Clock_Loaded(lv_event_t * e) {
+    if (lv_event_get_code(e) == LV_EVENT_SCREEN_LOADED) {
+        is_decor_mode = true;
+        current_screen_index = 2; // Khớp với index của ui_Time
+        joystick_standby_mode();
+        Serial.println("[SYSTEM] Kích hoạt chế độ DECOR (Duyệt 4 màn).");
+    }
+}
+
+// 2. Gắn hàm này vào sự kiện LOADED của CÁC MÀN HÌNH PHỤ (Setting/WiFi...)
+void ui_event_SubScreen_Loaded(lv_event_t * e) {
+    if (lv_event_get_code(e) == LV_EVENT_SCREEN_LOADED) {
+        is_decor_mode = false; // Đứng yên
+        joystick_standby_mode();
+        Serial.println("[SYSTEM] Kích hoạt chế độ SETTING (Đứng yên).");
+    }
 }
 
 
@@ -167,91 +193,63 @@ void joystick_init() {
 }
 
 void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data) {
-    // 1. Đọc giá trị ADC trực tiếp (Dải 0 -> 4095 trên ESP32)
     int raw_x = analogRead(pinVRx);
     int raw_y = analogRead(pinVRy);
     bool sw_pressed = (digitalRead(pinSW) == LOW);
 
     uint32_t current_key = 0;
 
-    // Serial.println("READ Joystick");
-
-    // 2. Xử lý Deadzone & Xác định phím hướng
-    // Nếu vượt qua vùng chết (Abs(Val - Center) > Deadzone)
-    if (abs(raw_x - ADC_CENTER_X) > ADC_DEADZONE || abs(raw_y - ADC_CENTER_Y) > ADC_DEADZONE) {
-        
-        // --- Trục X ---
-        if (raw_x >= THRES_X_MAX) {
-            current_key = LV_KEY_DOWN;
-            Serial.printf("DOWN, RawX = %d\n", raw_x);
-        } else if (raw_x <= THRES_X_MIN) {
-            current_key = LV_KEY_UP;
-            Serial.printf("UP, RawX = %d\n", raw_x);
-        }
-        
-        // --- Trục Y ---
-        // (Nếu gạt đường chéo, trục Y sẽ ghi đè hoặc kết hợp tùy ưu tiên)
-        if (raw_y >= THRES_Y_MAX) {
-            current_key = LV_KEY_LEFT;
-            Serial.printf("LEFT, Rawy = %d\n", raw_y);
-        } 
-        else if (raw_y <= THRES_Y_MIN) {
-            current_key = LV_KEY_RIGHT;
-            Serial.printf("RIGHT, Rawy = %d\n", raw_y);
-        }
-    } 
-    
-    // --- Nút nhấn SW ---
-    if (sw_pressed) {
-        current_key = LV_KEY_ENTER; 
-        Serial.println("PRESSED");
+    // Xác định hướng
+    if (raw_x >= THRES_X_MAX) {
+        current_key = LV_KEY_DOWN;
+    } else if (raw_x <= THRES_X_MIN) {
+        current_key = LV_KEY_UP;
+    } else if (raw_y >= THRES_Y_MAX) {
+        current_key = LV_KEY_LEFT;
+    } else if (raw_y <= THRES_Y_MIN) {
+        current_key = LV_KEY_RIGHT;
     }
 
-    // 3. Xử lý logic Nhấn đơn & Auto-Repeat (Kéo-Giữ tự động chạy)
+    // Nút nhấn ưu tiên cao nhất
+    if (sw_pressed) {
+        current_key = LV_KEY_ENTER;
+    }
+
     uint32_t now = millis();
 
     if (current_key != 0) {
         if (current_key != last_active_key) {
-            // Trường hợp 1: Mới gạt/bấm phím mới lần đầu
+            // Phím mới vừa được nhấn
             last_active_key = current_key;
             last_key_time = now;
             is_holding = false;
 
             data->key = current_key;
             data->state = LV_INDEV_STATE_PRESSED;
-        } 
+        }
         else {
-            // Trường hợp 2: Đang giữ nguyên vị trí cũ
-#if ENABLE_AUTO_REPEAT
-            uint32_t elapsed = now - last_key_time;
-
-            if (!is_holding && elapsed >= REPEAT_DELAY_MS) {
-                // Đã giữ đủ lâu -> Bắt đầu chế độ Auto-repeat
-                is_holding = true;
-                last_key_time = now;
-                data->key = current_key;
-                data->state = LV_INDEV_STATE_PRESSED;
-            } 
-            else if (is_holding && elapsed >= REPEAT_RATE_MS) {
-                // Tự động nhả và gửi lại phím liên tục theo chu kỳ REPEAT_RATE_MS
-                last_key_time = now;
-                data->key = current_key;
-                data->state = LV_INDEV_STATE_PRESSED;
-            } 
-            else {
-                // Đang trong khoảng chờ giữa các lần lặp
-                data->key = current_key;
-                data->state = LV_INDEV_STATE_RELEASED;
-            }
-#else
-            // Nếu TẮT Auto-repeat: Chỉ báo đang giữ (Pressed)
+            // Đang giữ nguyên phím → LUÔN gửi PRESSED
+            // (để LVGL có thể phát hiện Long-press)
             data->key = current_key;
             data->state = LV_INDEV_STATE_PRESSED;
-#endif
+
+            // Phần auto-repeat (nếu vẫn muốn dùng)
+            #if ENABLE_AUTO_REPEAT
+            uint32_t elapsed = now - last_key_time;
+            if (!is_holding && elapsed >= REPEAT_DELAY_MS) {
+                is_holding = true;
+                last_key_time = now;
+                // Có thể gửi thêm 1 lần PRESSED ở đây nếu cần
+            }
+            else if (is_holding && elapsed >= REPEAT_RATE_MS) {
+                last_key_time = now;
+                // Gửi lại PRESSED để tạo hiệu ứng repeat
+            }
+            #endif
         }
-    } 
+    }
     else {
-        // Trường hợp 3: Thả Joystick về giữa / Không bấm nút
+        // Thả phím thật sự
         if (last_active_key != 0) {
             data->key = last_active_key;
             data->state = LV_INDEV_STATE_RELEASED;
@@ -498,9 +496,9 @@ void checkWiFi (lv_timer_t * timer) {
         lv_obj_add_flag(ui_MoveToClock, LV_OBJ_FLAG_HIDDEN);
 
         lv_label_set_text_fmt(ui_WiFiStatus, "WiFi: No connection");
-        lv_label_set_text(ui_DailyTemp, "No connection");
-        lv_label_set_text(ui_TempNow, "No connection");
-        lv_label_set_text(ui_Humidity, "No connection");
+        lv_label_set_text(ui_DailyTemp, "No info");
+        lv_label_set_text(ui_TempNow, "No info");
+        lv_label_set_text(ui_Humidity, "No info");
     }
     
 }

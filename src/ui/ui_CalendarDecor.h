@@ -3,18 +3,18 @@
 // LVGL version: 9.1.0
 // Project name: TFT_28
 
-#ifndef UI_CALENDAR1_H
-#define UI_CALENDAR1_H
+#ifndef UI_CALENDARDECOR_H
+#define UI_CALENDARDECOR_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// SCREEN: ui_Calendar1
-extern void ui_Calendar1_screen_init(void);
-extern void ui_Calendar1_screen_destroy(void);
-extern lv_obj_t * ui_Calendar1;
-extern lv_obj_t * ui_CalendarSetting1;
+// SCREEN: ui_CalendarDecor
+extern void ui_CalendarDecor_screen_init(void);
+extern void ui_CalendarDecor_screen_destroy(void);
+extern lv_obj_t * ui_CalendarDecor;
+extern lv_obj_t * ui_CalendarD;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

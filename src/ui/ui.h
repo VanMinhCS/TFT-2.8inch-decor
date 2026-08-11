@@ -34,7 +34,7 @@ extern "C" {
 #include "ui_Time.h"
 #include "ui_Keqing.h"
 #include "ui_Move.h"
-#include "ui_Calendar1.h"
+#include "ui_CalendarDecor.h"
 
 ///////////////////// VARIABLES ////////////////////
 
