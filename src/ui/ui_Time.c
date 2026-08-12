@@ -6,6 +6,8 @@
 #include "ui.h"
 
 lv_obj_t * ui_Time = NULL;
+lv_obj_t * ui_WiFiStatus = NULL;
+lv_obj_t * ui_resync = NULL;
 lv_obj_t * ui_HourPanel = NULL;
 lv_obj_t * ui_Hour = NULL;
 lv_obj_t * ui_Second = NULL;
@@ -16,7 +18,6 @@ lv_obj_t * ui_DOW = NULL;
 lv_obj_t * ui_LunarPanel = NULL;
 lv_obj_t * ui_LunarLabel = NULL;
 lv_obj_t * ui_LunarDay = NULL;
-lv_obj_t * ui_WiFiStatus = NULL;
 lv_obj_t * ui_Weather = NULL;
 lv_obj_t * ui_Temp = NULL;
 lv_obj_t * ui_HumidIcon = NULL;
@@ -26,6 +27,14 @@ lv_obj_t * ui_TempNow = NULL;
 lv_obj_t * ui_Day = NULL;
 lv_obj_t * ui_Night = NULL;
 // event funtions
+void ui_event_resync(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        ReSyncManually(e);
+    }
+}
 
 // build funtions
 
@@ -33,6 +42,31 @@ void ui_Time_screen_init(void)
 {
     ui_Time = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Time, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_WiFiStatus = lv_label_create(ui_Time);
+    lv_obj_set_width(ui_WiFiStatus, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_WiFiStatus, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_WiFiStatus, 2);
+    lv_obj_set_y(ui_WiFiStatus, 2);
+    lv_label_set_text(ui_WiFiStatus, "WiFi: Thanh Le");
+    lv_obj_set_style_text_color(ui_WiFiStatus, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_WiFiStatus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_WiFiStatus, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_WiFiStatus, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_resync = lv_image_create(ui_Time);
+    lv_image_set_src(ui_resync, &ui_img_385938922);
+    lv_obj_set_width(ui_resync, LV_SIZE_CONTENT);   /// 16
+    lv_obj_set_height(ui_resync, LV_SIZE_CONTENT);    /// 16
+    lv_obj_set_x(ui_resync, -5);
+    lv_obj_set_y(ui_resync, 0);
+    lv_obj_set_align(ui_resync, LV_ALIGN_TOP_RIGHT);
+    lv_obj_add_flag(ui_resync, LV_OBJ_FLAG_CLICKABLE);     /// Flags
+    lv_obj_remove_flag(ui_resync, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_resync, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_resync, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_resync, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_resync, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_HourPanel = lv_obj_create(ui_Time);
     lv_obj_set_width(ui_HourPanel, 205);
@@ -58,7 +92,7 @@ void ui_Time_screen_init(void)
     ui_Second = lv_label_create(ui_HourPanel);
     lv_obj_set_width(ui_Second, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Second, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Second, 85);
+    lv_obj_set_x(ui_Second, 81);
     lv_obj_set_y(ui_Second, 8);
     lv_obj_set_align(ui_Second, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Second, "00");
@@ -138,17 +172,6 @@ void ui_Time_screen_init(void)
     lv_obj_set_align(ui_LunarDay, LV_ALIGN_CENTER);
     lv_label_set_text(ui_LunarDay, "20-06-2026");
     lv_obj_set_style_text_font(ui_LunarDay, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_WiFiStatus = lv_label_create(ui_Time);
-    lv_obj_set_width(ui_WiFiStatus, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_WiFiStatus, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_WiFiStatus, 2);
-    lv_obj_set_y(ui_WiFiStatus, 2);
-    lv_label_set_text(ui_WiFiStatus, "WiFi: Thanh Le");
-    lv_obj_set_style_text_color(ui_WiFiStatus, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_WiFiStatus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui_WiFiStatus, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_WiFiStatus, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Weather = lv_obj_create(ui_Time);
     lv_obj_set_width(ui_Weather, 105);
@@ -238,6 +261,8 @@ void ui_Time_screen_init(void)
     lv_obj_add_flag(ui_Night, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_CLICKABLE);     /// Flags
     lv_obj_remove_flag(ui_Night, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
+    lv_obj_add_event_cb(ui_resync, ui_event_resync, LV_EVENT_ALL, NULL);
+
 }
 
 void ui_Time_screen_destroy(void)
@@ -246,6 +271,8 @@ void ui_Time_screen_destroy(void)
 
     // NULL screen variables
     ui_Time = NULL;
+    ui_WiFiStatus = NULL;
+    ui_resync = NULL;
     ui_HourPanel = NULL;
     ui_Hour = NULL;
     ui_Second = NULL;
@@ -256,7 +283,6 @@ void ui_Time_screen_destroy(void)
     ui_LunarPanel = NULL;
     ui_LunarLabel = NULL;
     ui_LunarDay = NULL;
-    ui_WiFiStatus = NULL;
     ui_Weather = NULL;
     ui_Temp = NULL;
     ui_HumidIcon = NULL;

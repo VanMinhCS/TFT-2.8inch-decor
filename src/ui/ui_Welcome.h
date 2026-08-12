@@ -21,12 +21,12 @@ extern lv_obj_t * ui_Label12;
 extern void ui_event_SettingOption1(lv_event_t * e);
 extern lv_obj_t * ui_SettingOption1;
 extern lv_obj_t * ui_Label1;
-extern void ui_event_SettingOption2(lv_event_t * e);
-extern lv_obj_t * ui_SettingOption2;
-extern lv_obj_t * ui_Label2;
 extern void ui_event_SettingOption3(lv_event_t * e);
 extern lv_obj_t * ui_SettingOption3;
 extern lv_obj_t * ui_Label7;
+extern void ui_event_SettingOption2(lv_event_t * e);
+extern lv_obj_t * ui_SettingOption2;
+extern lv_obj_t * ui_Label2;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

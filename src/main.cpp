@@ -2,8 +2,6 @@
 #include <global_help.h>
 
 QueueHandle_t WiFiInfo = NULL;
-QueueHandle_t DayHandle = NULL;
-QueueHandle_t TimeHandle = NULL;
 QueueHandle_t WeatherHandle = NULL;
 
 TFT_eSPI tft = TFT_eSPI();
@@ -32,9 +30,7 @@ void setup() {
   lv_display_set_flush_cb(disp, my_disp_flush);
   lv_display_set_default(disp);
 
-  TimeHandle = xQueueCreate(2, sizeof(timeData));
   WiFiInfo = xQueueCreate(2, sizeof(WiFiData));
-  DayHandle = xQueueCreate(2, sizeof(dayData));
   WeatherHandle = xQueueCreate(2, sizeof(WeatherData));
   
   lv_indev_t * indev_joystick = lv_indev_create();

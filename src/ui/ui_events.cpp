@@ -6,6 +6,8 @@
 #include "ui.h"
 #include <global_help.h>
 
+TaskHandle_t resync_handle = NULL;
+
 void connectWifFi(lv_event_t * e)
 {
 	WiFiData wifiData;
@@ -13,25 +15,6 @@ void connectWifFi(lv_event_t * e)
 	strcpy(wifiData.pass, lv_textarea_get_text(ui_WiFiPass));
 	xQueueSend(WiFiInfo, &wifiData, portMAX_DELAY);
 	
-}
-
-void saveTimeManually(lv_event_t * e)
-{
-	int hourGet = lv_spinbox_get_value(ui_Spinbox1);
-	int minuteGet = lv_spinbox_get_value(ui_Spinbox2);
-	int secondGet = 0;
-
-	timeData time = {hourGet, minuteGet, secondGet};
-	xQueueSend(TimeHandle, &time, portMAX_DELAY);
-}
-
-void SetDayManually(lv_event_t * e)
-{
-	lv_calendar_date_t date;
-	lv_calendar_get_pressed_date(ui_CalendarSetting, &date);
-	dayData day = {(int)date.day, (int)date.month, (int)date.year};
-	lv_label_set_text_fmt(ui_DaySetting, "%02d-%02d-%04d", (int)day.day, (int)day.month, (int)day.year);
-	xQueueSend(DayHandle, &day, portMAX_DELAY);
 }
 
 void scanWifiCall(lv_event_t * e)
@@ -58,4 +41,9 @@ void groupKeyboard(lv_event_t * e)
         
         Serial.println("[KEYBOARD] Đã nhảy Focus vào Bàn phím ảo!");
     }
+}
+
+void ReSyncManually(lv_event_t * e)
+{
+	if(resync_handle != NULL) xTaskNotifyGive(resync_handle);
 }

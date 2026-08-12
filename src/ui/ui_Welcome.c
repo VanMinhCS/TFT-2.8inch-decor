@@ -12,12 +12,21 @@ lv_obj_t * ui_Panel3 = NULL;
 lv_obj_t * ui_Label12 = NULL;
 lv_obj_t * ui_SettingOption1 = NULL;
 lv_obj_t * ui_Label1 = NULL;
-lv_obj_t * ui_SettingOption2 = NULL;
-lv_obj_t * ui_Label2 = NULL;
 lv_obj_t * ui_SettingOption3 = NULL;
 lv_obj_t * ui_Label7 = NULL;
+lv_obj_t * ui_SettingOption2 = NULL;
+lv_obj_t * ui_Label2 = NULL;
 // event funtions
 void ui_event_SettingOption1(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_WiFiSetting, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_WiFiSetting_screen_init);
+    }
+}
+
+void ui_event_SettingOption3(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
@@ -31,16 +40,7 @@ void ui_event_SettingOption2(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_SettingTimeManually, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_SettingTimeManually_screen_init);
-    }
-}
-
-void ui_event_SettingOption3(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_WiFiSetting, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_WiFiSetting_screen_init);
+        _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
     }
 }
 
@@ -126,32 +126,6 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_Label1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_SettingOption2 = lv_button_create(ui_Welcome);
-    lv_obj_set_width(ui_SettingOption2, 155);
-    lv_obj_set_height(ui_SettingOption2, 68);
-    lv_obj_set_x(ui_SettingOption2, 80);
-    lv_obj_set_y(ui_SettingOption2, 78);
-    lv_obj_set_align(ui_SettingOption2, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_SettingOption2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_remove_flag(ui_SettingOption2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_outline_color(ui_SettingOption2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_width(ui_SettingOption2, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_color(ui_SettingOption2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(ui_SettingOption2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
-
-    ui_Label2 = lv_label_create(ui_SettingOption2);
-    lv_obj_set_width(ui_Label2, 155);
-    lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label2, "Setting time manually\nTrust yourself man");
-    lv_obj_set_style_text_color(ui_Label2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui_Label2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-
     ui_SettingOption3 = lv_button_create(ui_Welcome);
     lv_obj_set_width(ui_SettingOption3, 155);
     lv_obj_set_height(ui_SettingOption3, 68);
@@ -174,9 +148,35 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label7, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_Label7, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_SettingOption2 = lv_button_create(ui_Welcome);
+    lv_obj_set_width(ui_SettingOption2, 155);
+    lv_obj_set_height(ui_SettingOption2, 68);
+    lv_obj_set_x(ui_SettingOption2, 80);
+    lv_obj_set_y(ui_SettingOption2, 78);
+    lv_obj_set_align(ui_SettingOption2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_SettingOption2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_remove_flag(ui_SettingOption2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_outline_color(ui_SettingOption2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_width(ui_SettingOption2, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(ui_SettingOption2, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_SettingOption2, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_SettingOption2, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_SettingOption2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
+
+    ui_Label2 = lv_label_create(ui_SettingOption2);
+    lv_obj_set_width(ui_Label2, 155);
+    lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label2, "Move to clock screen immidiately");
+    lv_obj_set_style_text_color(ui_Label2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_Label2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_SettingOption1, ui_event_SettingOption1, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_SettingOption2, ui_event_SettingOption2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_SettingOption3, ui_event_SettingOption3, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_SettingOption2, ui_event_SettingOption2, LV_EVENT_ALL, NULL);
 
 }
 
@@ -192,9 +192,9 @@ void ui_Welcome_screen_destroy(void)
     ui_Label12 = NULL;
     ui_SettingOption1 = NULL;
     ui_Label1 = NULL;
-    ui_SettingOption2 = NULL;
-    ui_Label2 = NULL;
     ui_SettingOption3 = NULL;
     ui_Label7 = NULL;
+    ui_SettingOption2 = NULL;
+    ui_Label2 = NULL;
 
 }

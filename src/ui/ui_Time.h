@@ -14,6 +14,9 @@ extern "C" {
 extern void ui_Time_screen_init(void);
 extern void ui_Time_screen_destroy(void);
 extern lv_obj_t * ui_Time;
+extern lv_obj_t * ui_WiFiStatus;
+extern void ui_event_resync(lv_event_t * e);
+extern lv_obj_t * ui_resync;
 extern lv_obj_t * ui_HourPanel;
 extern lv_obj_t * ui_Hour;
 extern lv_obj_t * ui_Second;
@@ -24,7 +27,6 @@ extern lv_obj_t * ui_DOW;
 extern lv_obj_t * ui_LunarPanel;
 extern lv_obj_t * ui_LunarLabel;
 extern lv_obj_t * ui_LunarDay;
-extern lv_obj_t * ui_WiFiStatus;
 extern lv_obj_t * ui_Weather;
 extern lv_obj_t * ui_Temp;
 extern lv_obj_t * ui_HumidIcon;

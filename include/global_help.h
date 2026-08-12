@@ -6,6 +6,7 @@
 #include <lvgl.h>
 #include <Preferences.h>
 #include <TFT_eSPI.h>
+#include <LunarCalendar.h>
 #include <WiFi.h>
 // Joystick
 const int pinVRx = 8;
@@ -60,9 +61,10 @@ void ui_event_SubScreen_Loaded(lv_event_t * e);
 // Global object for help, use to share between Core 0 and Core 1
 extern volatile bool request_wifi_scan;
 extern QueueHandle_t WiFiInfo; // use for WiFi info
-extern QueueHandle_t DayHandle; // use for Day setting manually
-extern QueueHandle_t TimeHandle; // use for Time setting Manually
 extern QueueHandle_t WeatherHandle; // use for weather get from API
+extern TaskHandle_t getAPI_handle;
+extern TaskHandle_t resync_handle;
+extern TaskHandle_t lunar_handle;
 typedef struct {
     int hour, minute, second;
 }timeData;
@@ -98,9 +100,10 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data);
 // Method for Core 0
 void getAPI(void * pvParameters);
 void getAPILunar(void * pvParameters);
-void settingTimeFromLVGL(void * pvParameters); 
+void lunar(void * pvParamerters);
 void connectWiFi(void * pvParameters);
 void scanWiFi(void * pvParameters);
+void resync(void * pvParameters);
 void createTask();
 
 // Method for lvgl (Core 1)

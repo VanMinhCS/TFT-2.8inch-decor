@@ -1,7 +1,5 @@
 ui_Welcome.c
 ui_WiFiSetting.c
-ui_SettingTimeManually.c
-ui_Calendar.c
 ui_Time.c
 ui_Keqing.c
 ui_Move.c
@@ -11,8 +9,7 @@ ui_comp_hook.c
 ui_helpers.c
 ui_events.cpp
 ui_img_388382192.c
-ui_img_check_png.c
-ui_img_calendar_png.c
+ui_img_385938922.c
 ui_img_thermometer_png.c
 ui_img_humidity_png.c
 ui_img_84851999.c

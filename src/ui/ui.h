@@ -29,8 +29,6 @@ extern "C" {
 
 #include "ui_Welcome.h"
 #include "ui_WiFiSetting.h"
-#include "ui_SettingTimeManually.h"
-#include "ui_Calendar.h"
 #include "ui_Time.h"
 #include "ui_Keqing.h"
 #include "ui_Move.h"
@@ -45,8 +43,7 @@ extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_388382192);    // assets/left-arrow.png
-LV_IMG_DECLARE(ui_img_check_png);    // assets/check.png
-LV_IMG_DECLARE(ui_img_calendar_png);    // assets/calendar.png
+LV_IMG_DECLARE(ui_img_385938922);    // assets/refresh-arrow.png
 LV_IMG_DECLARE(ui_img_thermometer_png);    // assets/thermometer.png
 LV_IMG_DECLARE(ui_img_humidity_png);    // assets/humidity.png
 LV_IMG_DECLARE(ui_img_84851999);    // assets/day-mode.png

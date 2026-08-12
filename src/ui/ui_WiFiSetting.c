@@ -10,10 +10,10 @@ lv_obj_t * ui_WiFiList = NULL;
 lv_obj_t * ui_WiFiPass = NULL;
 lv_obj_t * ui_ConnectButton = NULL;
 lv_obj_t * ui_ConnectText = NULL;
-lv_obj_t * ui_BackToWelcome1 = NULL;
 lv_obj_t * ui_Keyboard1 = NULL;
 lv_obj_t * ui_MoveToClock = NULL;
 lv_obj_t * ui_Label8 = NULL;
+lv_obj_t * ui_BackToWelcome1 = NULL;
 // event funtions
 void ui_event_WiFiSetting(lv_event_t * e)
 {
@@ -45,15 +45,6 @@ void ui_event_ConnectButton(lv_event_t * e)
     }
 }
 
-void ui_event_BackToWelcome1(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Welcome, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Welcome_screen_init);
-    }
-}
-
 void ui_event_Keyboard1(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -69,6 +60,15 @@ void ui_event_MoveToClock(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_screen_change(&ui_Time, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Time_screen_init);
+    }
+}
+
+void ui_event_BackToWelcome1(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Welcome, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Welcome_screen_init);
     }
 }
 
@@ -101,7 +101,6 @@ void ui_WiFiSetting_screen_init(void)
     lv_obj_set_align(ui_WiFiPass, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_WiFiPass, "Password");
     lv_textarea_set_one_line(ui_WiFiPass, true);
-    lv_textarea_set_password_mode(ui_WiFiPass, true);
     lv_obj_set_style_border_color(ui_WiFiPass, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_WiFiPass, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_color(ui_WiFiPass, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
@@ -138,16 +137,6 @@ void ui_WiFiSetting_screen_init(void)
     lv_obj_set_style_text_font(ui_ConnectText, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_blend_mode(ui_ConnectText, LV_BLEND_MODE_SUBTRACTIVE, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_BackToWelcome1 = lv_imagebutton_create(ui_WiFiSetting);
-    lv_imagebutton_set_src(ui_BackToWelcome1, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_388382192, NULL);
-    lv_obj_set_width(ui_BackToWelcome1, 32);
-    lv_obj_set_height(ui_BackToWelcome1, 32);
-    lv_obj_set_align(ui_BackToWelcome1, LV_ALIGN_BOTTOM_LEFT);
-    lv_obj_set_style_outline_color(ui_BackToWelcome1, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_opa(ui_BackToWelcome1, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(ui_BackToWelcome1, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_pad(ui_BackToWelcome1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
-
     ui_Keyboard1 = lv_keyboard_create(ui_WiFiSetting);
     lv_obj_set_width(ui_Keyboard1, 320);
     lv_obj_set_height(ui_Keyboard1, 120);
@@ -174,12 +163,22 @@ void ui_WiFiSetting_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label8, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_Label8, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_BackToWelcome1 = lv_imagebutton_create(ui_WiFiSetting);
+    lv_imagebutton_set_src(ui_BackToWelcome1, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &ui_img_388382192, NULL);
+    lv_obj_set_width(ui_BackToWelcome1, 32);
+    lv_obj_set_height(ui_BackToWelcome1, 32);
+    lv_obj_set_align(ui_BackToWelcome1, LV_ALIGN_BOTTOM_LEFT);
+    lv_obj_set_style_outline_color(ui_BackToWelcome1, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_opa(ui_BackToWelcome1, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_width(ui_BackToWelcome1, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
+    lv_obj_set_style_outline_pad(ui_BackToWelcome1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
+
     lv_obj_add_event_cb(ui_WiFiPass, ui_event_WiFiPass, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ConnectButton, ui_event_ConnectButton, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_BackToWelcome1, ui_event_BackToWelcome1, LV_EVENT_ALL, NULL);
     lv_keyboard_set_textarea(ui_Keyboard1, ui_WiFiPass);
     lv_obj_add_event_cb(ui_Keyboard1, ui_event_Keyboard1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_MoveToClock, ui_event_MoveToClock, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BackToWelcome1, ui_event_BackToWelcome1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_WiFiSetting, ui_event_WiFiSetting, LV_EVENT_ALL, NULL);
 
 }
@@ -194,9 +193,9 @@ void ui_WiFiSetting_screen_destroy(void)
     ui_WiFiPass = NULL;
     ui_ConnectButton = NULL;
     ui_ConnectText = NULL;
-    ui_BackToWelcome1 = NULL;
     ui_Keyboard1 = NULL;
     ui_MoveToClock = NULL;
     ui_Label8 = NULL;
+    ui_BackToWelcome1 = NULL;
 
 }

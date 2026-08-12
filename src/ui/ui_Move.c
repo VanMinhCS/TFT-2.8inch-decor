@@ -12,8 +12,6 @@ lv_obj_t * ui_Button1 = NULL;
 lv_obj_t * ui_Label4 = NULL;
 lv_obj_t * ui_Button2 = NULL;
 lv_obj_t * ui_Label5 = NULL;
-lv_obj_t * ui_Button3 = NULL;
-lv_obj_t * ui_Label6 = NULL;
 // event funtions
 void ui_event_Button1(lv_event_t * e)
 {
@@ -30,15 +28,6 @@ void ui_event_Button2(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_screen_change(&ui_WiFiSetting, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_WiFiSetting_screen_init);
-    }
-}
-
-void ui_event_Button3(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_SettingTimeManually, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_SettingTimeManually_screen_init);
     }
 }
 
@@ -71,10 +60,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_style_text_font(ui_Label3, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button1 = lv_button_create(ui_Move);
-    lv_obj_set_width(ui_Button1, 105);
-    lv_obj_set_height(ui_Button1, 104);
-    lv_obj_set_x(ui_Button1, -107);
-    lv_obj_set_y(ui_Button1, 33);
+    lv_obj_set_width(ui_Button1, 180);
+    lv_obj_set_height(ui_Button1, 50);
+    lv_obj_set_x(ui_Button1, 0);
+    lv_obj_set_y(ui_Button1, 5);
     lv_obj_set_align(ui_Button1, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_Button1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -84,8 +73,8 @@ void ui_Move_screen_init(void)
     lv_obj_set_style_outline_pad(ui_Button1, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label4 = lv_label_create(ui_Button1);
-    lv_obj_set_width(ui_Label4, 79);
-    lv_obj_set_height(ui_Label4, 36);
+    lv_obj_set_width(ui_Label4, 180);
+    lv_obj_set_height(ui_Label4, LV_SIZE_CONTENT);    /// 36
     lv_obj_set_align(ui_Label4, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label4, "Welcome screen");
     lv_obj_set_style_text_color(ui_Label4, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -93,10 +82,10 @@ void ui_Move_screen_init(void)
     lv_obj_set_style_text_align(ui_Label4, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button2 = lv_button_create(ui_Move);
-    lv_obj_set_width(ui_Button2, 105);
-    lv_obj_set_height(ui_Button2, 104);
+    lv_obj_set_width(ui_Button2, 180);
+    lv_obj_set_height(ui_Button2, 50);
     lv_obj_set_x(ui_Button2, 0);
-    lv_obj_set_y(ui_Button2, 33);
+    lv_obj_set_y(ui_Button2, 77);
     lv_obj_set_align(ui_Button2, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Button2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_remove_flag(ui_Button2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -106,7 +95,7 @@ void ui_Move_screen_init(void)
     lv_obj_set_style_outline_pad(ui_Button2, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
 
     ui_Label5 = lv_label_create(ui_Button2);
-    lv_obj_set_width(ui_Label5, 105);
+    lv_obj_set_width(ui_Label5, 180);
     lv_obj_set_height(ui_Label5, lv_pct(39));
     lv_obj_set_align(ui_Label5, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label5, "WiFi Setting Screen");
@@ -114,31 +103,8 @@ void ui_Move_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_Label5, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Button3 = lv_button_create(ui_Move);
-    lv_obj_set_width(ui_Button3, 105);
-    lv_obj_set_height(ui_Button3, 104);
-    lv_obj_set_x(ui_Button3, 107);
-    lv_obj_set_y(ui_Button3, 33);
-    lv_obj_set_align(ui_Button3, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button3, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_remove_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_outline_color(ui_Button3, lv_color_hex(0x001CFF), LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_opa(ui_Button3, 255, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(ui_Button3, 4, LV_PART_MAIN | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_pad(ui_Button3, 0, LV_PART_MAIN | LV_STATE_FOCUSED);
-
-    ui_Label6 = lv_label_create(ui_Button3);
-    lv_obj_set_width(ui_Label6, 105);
-    lv_obj_set_height(ui_Label6, 46);
-    lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label6, "Setting time manually screen");
-    lv_obj_set_style_text_color(ui_Label6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Label6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui_Label6, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-
     lv_obj_add_event_cb(ui_Button1, ui_event_Button1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button2, ui_event_Button2, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Button3, ui_event_Button3, LV_EVENT_ALL, NULL);
 
 }
 
@@ -154,7 +120,5 @@ void ui_Move_screen_destroy(void)
     ui_Label4 = NULL;
     ui_Button2 = NULL;
     ui_Label5 = NULL;
-    ui_Button3 = NULL;
-    ui_Label6 = NULL;
 
 }

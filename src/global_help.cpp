@@ -7,6 +7,9 @@ int current_screen_index = 2;
 
 lv_group_t * input_group = nullptr;
 
+TaskHandle_t getAPI_handle = NULL;
+TaskHandle_t lunar_handle = NULL;
+
 volatile bool request_wifi_scan = false;
 lv_group_t * joystick_group = nullptr;
 lv_obj_t * main_screens[NUM_MAIN_SCREENS] = {nullptr};
@@ -17,6 +20,13 @@ static void collect_widgets_recursive(lv_obj_t * parent, uint32_t &count, lv_obj
         lv_obj_t * child = lv_obj_get_child(parent, i);
         if (lv_obj_has_flag(child, LV_OBJ_FLAG_HIDDEN)) continue;
 
+        // Calendar: KHÔNG add chính nó, mà đệ quy xuyên qua để tìm Header (mũi tên/dropdown đổi tháng)
+        // VÀ Button Matrix ngày bên trong — coi Calendar như 1 Container trong suốt
+        if (lv_obj_check_type(child, &lv_calendar_class)) {
+            collect_widgets_recursive(child, count, first_widget);
+            continue;
+        }
+
         bool is_clickable = lv_obj_has_flag(child, LV_OBJ_FLAG_CLICKABLE);
         if (is_clickable) {
             lv_group_add_obj(joystick_group, child);
@@ -25,8 +35,8 @@ static void collect_widgets_recursive(lv_obj_t * parent, uint32_t &count, lv_obj
             if (first_widget == NULL) first_widget = child;
             count++;
         }
-        // Chỉ đệ quy tiếp nếu bản thân nó KHÔNG phải widget clickable "trọn gói"
-        // (Container/Panel thì đệ quy vào trong; Button/Dropdown/Calendar thì dừng lại)
+
+        // Chỉ đệ quy tiếp nếu bản thân nó KHÔNG phải widget "trọn gói" đã tự xử lý nội dung
         if (!is_clickable) {
             collect_widgets_recursive(child, count, first_widget);
         }
@@ -63,57 +73,138 @@ void navigate_to_main_screen(int new_index) {
 void joystick_event_handler(lv_event_t * e) {
     lv_event_code_t code = lv_event_get_code(e);
 
-    // -------------------------------------------------------------
-    // 1. NHẤN GIỮ ĐỂ THOÁT WIDGET (Áp dụng cho mọi màn hình)
-    // -------------------------------------------------------------
+    // =========================================================
+    // 1. LONG PRESS → THOÁT MODE WIDGET
+    // =========================================================
     if (code == LV_EVENT_LONG_PRESSED && is_in_widget) {
+        // Nếu đang mở dropdown thì đóng trước
+        lv_obj_t * focused = lv_group_get_focused(joystick_group);
+        if (focused && lv_obj_check_type(focused, &lv_dropdown_class) && lv_dropdown_is_open(focused)) {
+            lv_dropdown_close(focused);
+        }
         joystick_standby_mode();
-        Serial.println("[MODE] Thoát Widget. Đang chờ ngoài màn hình.");
+        Serial.println("[MODE] Thoát Widget");
         return;
     }
-    // Điều khiển ưidget
-    if (code == LV_EVENT_KEY && is_in_widget) {
-        uint32_t key = lv_indev_get_key(lv_indev_get_act());
-        lv_obj_t * focused = lv_group_get_focused(joystick_group);
 
-        bool let_widget_handle = false;
-        if (focused) {
-            if (lv_obj_check_type(focused, &lv_dropdown_class)) {
-                let_widget_handle = lv_dropdown_is_open(focused); // dropdown: chỉ nhường khi đang MỞ
-            } else if (lv_obj_check_type(focused, &lv_keyboard_class)   ||
-                    lv_obj_check_type(focused, &lv_buttonmatrix_class) ||
-                    lv_obj_check_type(focused, &lv_calendar_class)   ||
-                    lv_obj_check_type(focused, &lv_roller_class)     ||
-                    lv_obj_check_type(focused, &lv_spinbox_class)) 
-            {
-                let_widget_handle = true; // các widget này luôn tự quản lý UP/DOWN/LEFT/RIGHT khi đang focus
-            }
+    if (code != LV_EVENT_KEY) return;
+
+    uint32_t key = lv_indev_get_key(lv_indev_get_act());
+
+    // =========================================================
+    // 2. ĐANG Ở TRONG WIDGET MODE
+    // =========================================================
+    if (is_in_widget) {
+        lv_obj_t * focused = lv_group_get_focused(joystick_group);
+        if (focused == NULL) return;
+
+        // ---------- DROPDOWN ----------
+        if (lv_obj_check_type(focused, &lv_dropdown_class)) {
+            if (key == LV_KEY_DOWN) { lv_group_focus_next(joystick_group); return; }
+            if (key == LV_KEY_UP)   { lv_group_focus_prev(joystick_group); return; }
         }
 
-        if (let_widget_handle) return;
-
-        if (key == LV_KEY_DOWN) { lv_group_focus_next(joystick_group); return; }
-        if (key == LV_KEY_UP)   { lv_group_focus_prev(joystick_group); return; }
-    }
-
-    // -------------------------------------------------------------
-    // 2. KHI ĐANG "ĐỨNG NGOÀI" MÀN HÌNH (Chưa chui vào Widget)
-    // -------------------------------------------------------------
-    if (code == LV_EVENT_KEY && !is_in_widget) {
-        uint32_t key = lv_indev_get_key(lv_indev_get_act());
-
-        // A. NHẤN ENTER ĐỂ "CHUI VÀO" ĐIỀU KHIỂN (Cho mọi màn hình)
-        if (key == LV_KEY_ENTER) {
-            is_in_widget = true;
-            // lv_group_remove_all_objs(joystick_group);
-            
-            // Tự động quét và nạp widget của màn hình hiện tại
-            auto_load_screen_widgets(lv_scr_act());
-            Serial.println("[MODE] Đã chui vào điều khiển Widget.");
+        // ---------- SPINBOX ----------
+        else if (lv_obj_check_type(focused, &lv_spinbox_class)) {
+            if (key == LV_KEY_ENTER) {
+                lv_group_focus_next(joystick_group);
+                Serial.println("[SPINBOX] ENTER -> next");
+                return;
+            }
+            // Các phím khác để spinbox tự xử lý
             return;
         }
 
-        // B. GẠT TRÁI/PHẢI CHUYỂN MÀN (Chỉ có tác dụng nếu đang ở DECOR)
+        // ---------- KEYBOARD ----------
+        else if (lv_obj_check_type(focused, &lv_keyboard_class)) {
+            // Xử lý các phím chức năng đặc biệt khi nhấn ENTER
+            if (key == LV_KEY_ENTER) {
+                // 1. Lấy chỉ số của nút đang được focus trong ma trận
+                uint16_t btn_idx = lv_btnmatrix_get_selected_btn(focused);
+                if (btn_idx != LV_BTNMATRIX_BTN_NONE) {
+                    // 2. Lấy văn bản của nút đó
+                    const char * btn_txt = lv_btnmatrix_get_btn_text(focused, btn_idx);
+                    
+                    // 3. So sánh và gửi sự kiện tương ứng
+                    if (strcmp(btn_txt, "ABC") == 0) {
+                        // Bỏ qua lần nhấn ENTER này và mô phỏng sự kiện CLICK cho nút
+                        // Điều này sẽ kích hoạt hành vi chuyển đổi chữ hoa/thường
+                        lv_keyboard_set_mode(ui_Keyboard1, LV_KEYBOARD_MODE_TEXT_UPPER);
+                        return; // Kết thúc xử lý, không cho LVGL xử lý tiếp
+                    } 
+                    else if (strcmp(btn_txt, "abc") == 0) {
+                        lv_keyboard_set_mode(ui_Keyboard1, LV_KEYBOARD_MODE_TEXT_LOWER);
+                    }
+                    else if (strcmp(btn_txt, "1#") == 0) {
+                        // Tương tự, mô phỏng sự kiện CLICK để chuyển sang bàn phím số
+                        lv_keyboard_set_mode(ui_Keyboard1, LV_KEYBOARD_MODE_SPECIAL);
+                        return;
+                    }
+                    else if (strcmp(btn_txt, LV_SYMBOL_OK) == 0) {
+                        lv_obj_add_flag(ui_Keyboard1, LV_OBJ_FLAG_HIDDEN);
+                        return;
+                    }
+                    // Bạn có thể thêm xử lý cho phím OK/CLOSE tương tự ở đây
+                }
+            }
+            
+            // Nếu không phải phím chức năng (hoặc không phải ENTER), để LVGL xử lý như cũ
+            return;
+        }
+
+        // ---------- BUTTONMATRIX / ROLLER ----------
+        else if (lv_obj_check_type(focused, &lv_buttonmatrix_class)) {
+            static lv_obj_t * last_focused_bm = nullptr;
+            static uint16_t last_btn_id = LV_BTNMATRIX_BTN_NONE;
+
+            // Reset bộ nhớ khi vừa chuyển sang 1 Button Matrix khác (vd Keyboard vs Calendar)
+            if (focused != last_focused_bm) {
+                last_focused_bm = focused;
+                last_btn_id = LV_BTNMATRIX_BTN_NONE;
+            }
+
+            uint16_t cur_btn_id = lv_btnmatrix_get_selected_btn(focused);
+
+            // Bấm UP mà vị trí ô chọn không đổi -> đã chạm hàng trên cùng -> thoát lên Header
+            if (key == LV_KEY_UP && cur_btn_id == last_btn_id) {
+                lv_group_focus_prev(joystick_group);
+            }
+
+            last_btn_id = cur_btn_id;
+            return;
+        }
+
+        else if (lv_obj_check_type(focused, &lv_roller_class)) {
+            return; // Roller giữ nguyên như cũ
+        }
+
+        // ---------- WIDGET THƯỜNG (btn, switch, slider, label...) ----------
+        else {
+            if (key == LV_KEY_UP) {
+                lv_group_focus_prev(joystick_group);
+                return;
+            }
+            if (key == LV_KEY_DOWN) {
+                lv_group_focus_next(joystick_group);
+                return;
+            }
+            // LEFT/RIGHT/ENTER để widget tự xử lý (nếu có)
+        }
+        return;
+    }
+
+    // =========================================================
+    // 3. ĐANG ĐỨNG NGOÀI (chưa vào widget)
+    // =========================================================
+    if (!is_in_widget) {
+        if (key == LV_KEY_ENTER) {
+            is_in_widget = true;
+            auto_load_screen_widgets(lv_scr_act());
+            lv_indev_wait_release(lv_indev_get_act());
+            Serial.println("[MODE] Vào điều khiển Widget");
+            return;
+        }
+
         if (is_decor_mode) {
             if (key == LV_KEY_RIGHT && current_screen_index < NUM_MAIN_SCREENS - 1) {
                 navigate_to_main_screen(current_screen_index + 1);
@@ -124,21 +215,6 @@ void joystick_event_handler(lv_event_t * e) {
         }
     }
 }
-
-// void ui_generic_setting_screen_loaded_cb(lv_event_t * e) {
-//     if (lv_event_get_code(e) == LV_EVENT_SCREEN_LOADED) {
-//         current_state = STATE_IN_SETTINGS;
-
-//         // Lấy con trỏ Màn hình Setting vừa mở
-//         lv_obj_t * setting_screen = (lv_obj_t *)lv_event_get_target(e);
-
-//         // Tự động nạp toàn bộ nút bấm trong Màn hình Setting đó vào Joystick
-//         lv_group_remove_all_objs(joystick_group);
-//         auto_load_screen_widgets(setting_screen);
-
-//         Serial.println("[SETTING] Đã nạp tự động Widget của Màn hình Setting!");
-//     }
-// }
 
 void setup_joystick_navigation(lv_indev_t * indev_joystick_driver) {
     main_screens[0] = ui_Move;
@@ -157,9 +233,6 @@ void setup_joystick_navigation(lv_indev_t * indev_joystick_driver) {
 
     lv_obj_add_event_cb(ui_Welcome, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_event_cb(ui_WiFiSetting, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
-    lv_obj_add_event_cb(ui_SettingTimeManually, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
-    lv_obj_add_event_cb(ui_Calendar, ui_event_SubScreen_Loaded, LV_EVENT_SCREEN_LOADED, NULL);
-
     // is_decor_mode = true;
     // current_screen_index = 2; // ui_Time
     joystick_standby_mode();
@@ -294,7 +367,19 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data) {
 
 void getAPI(void * pvParameters){
     String url = "https://api.open-meteo.com/v1/forecast?latitude=10.823&longitude=106.6296&daily=temperature_2m_max,temperature_2m_min&models=best_match&current=relative_humidity_2m,temperature_2m,is_day&timezone=Asia%2FBangkok&forecast_days=1";
+    
     while (1){
+        // Chờ notification hoặc timeout 30 phút
+        // pdTRUE: xóa counter sau khi lấy (chỉ cần biết có notification)
+        uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(30 * 60 * 1000));
+        
+        if (notified > 0) {
+            Serial.println("[WEATHER] Được đánh thức bởi WiFi vừa kết nối!");
+        } else {
+            Serial.println("[WEATHER] Timeout 30 phút, kiểm tra thời tiết...");
+        }
+
+        // Kiểm tra WiFi và gọi API
         if (WiFi.status() == WL_CONNECTED) {
             HTTPClient http;
             http.begin(url);
@@ -312,90 +397,34 @@ void getAPI(void * pvParameters){
                     .isDay = doc["current"]["is_day"]
                 };
                 xQueueSend(WeatherHandle, &weatherData, portMAX_DELAY);
-            }
-        }
-
-        vTaskDelay(30 * 60 * 1000);
-    }
-}
-
-void getAPILunar(void *pvParameters) {
-    TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = pdMS_TO_TICKS(24 * 3600 * 1000); // 1 ngày
-    
-    // Lần đầu: tính thời gian đến 0:30
-    struct tm timeinfo;
-    getLocalTime(&timeinfo);
-    int current_seconds = timeinfo.tm_hour * 3600 + timeinfo.tm_min * 60 + timeinfo.tm_sec;
-    int target_seconds = 30 * 60; // 0:30
-    
-    int wait_seconds = target_seconds - current_seconds;
-    if (wait_seconds <= 0) wait_seconds += 24 * 3600;
-    
-    // Chờ đến 0:30 lần đầu
-    vTaskDelay(pdMS_TO_TICKS(wait_seconds * 1000));
-
-    String url = "https://ngaygio.vn/api/lich-am";
-    
-    while(1) {
-        if (WiFi.status() == WL_CONNECTED) {
-            HTTPClient http;
-            http.begin(url);
-            int httpResponseCode = http.GET();
-
-            if (httpResponseCode > 0) {
-                String payload = http.getString();
-                JsonDocument doc;
-                deserializeJson(doc, payload);
-                int day = doc["lunar"]["day"];
-                int month = doc["lunar"]["month"];
-                int year = doc["lunar"]["year"];
-                char * lunar = (char*)malloc(11);
-                if (lunar){
-                    snprintf(lunar, sizeof(lunar), "%02d - %02d - %d", day, month, year);
-                    lv_async_call(update_lunar_callback, lunar);
-                }
+                Serial.println("[WEATHER] Đã cập nhật dữ liệu thời tiết");
                 
+            } else {
+                Serial.printf("[WEATHER] Lỗi HTTP: %d\n", httpResponseCode);
             }
+            http.end();
+        } else {
+            Serial.println("[WEATHER] Chưa có WiFi, bỏ qua lần này");
         }
-        vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
 
-void settingTimeFromLVGL (void * pvParameters) {
-    timeData time;
-    dayData day;
-    struct tm t;
-    getLocalTime(&t);
-    while (1)
-    {
-        if (xQueueReceive(TimeHandle, &time, 0))
+void lunar (void * pvParameters) {
+    while(1) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        struct tm timeinfo;
+        
+        if(getLocalTime(&timeinfo))
         {
-            t.tm_hour = time.hour;
-            t.tm_min = time.minute;
-            t.tm_sec = time.second;
-            time_t timestamp = mktime(&t);
-            struct timeval tv = {
-                .tv_sec = timestamp,
-                .tv_usec = 0
-            };
-            settimeofday(&tv, nullptr);
+            LunarDate lunar = LunarCalendar::solarToLunar(timeinfo.tm_mday, timeinfo.tm_mon + 1, timeinfo.tm_year + 1900);
+            static char * lunarDay = (char*)malloc(20);
+            if (lunarDay) {
+                snprintf(lunarDay, 20, "%02d-%02d-%d", lunar.day, lunar.month, lunar.year);
+                lv_async_call(update_lunar_callback, lunarDay);
+            }
         }
-
-        if (xQueueReceive(DayHandle, &day, 0)) {
-            t.tm_mday = day.day;
-            t.tm_mon = day.month - 1;
-            t.tm_year = day.year - 1900;
-            time_t timestamp = mktime(&t);
-            struct timeval tv = {
-                .tv_sec = timestamp,
-                .tv_usec = 0
-            };
-            settimeofday(&tv, nullptr);
-        }
-        vTaskDelay(pdMS_TO_TICKS(3000));
+        
     }
-    
 }
 
 void connectWiFi(void *pvParameters)
@@ -459,6 +488,9 @@ void connectWiFi(void *pvParameters)
                 );
 
                 Serial.println("NTP configured");
+
+                if (getAPI_handle != NULL) xTaskNotifyGive(getAPI_handle);
+                if (lunar_handle != NULL) xTaskNotifyGive(lunar_handle);
             }
         }
         else
@@ -557,12 +589,24 @@ void scanWiFi(void * pvParameters) {
     }
 }
 
+void resync(void * pvParameters) {
+    while (1) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        if (WiFi.status() == WL_CONNECTED) {
+            configTime(7*3600, 0, "vn.pool.ntp.org", "time.google.com");
+
+            if (getAPI_handle != NULL) xTaskNotifyGive(getAPI_handle);
+            if (lunar_handle != NULL) xTaskNotifyGive(lunar_handle);
+        }
+    }
+}
+
 void createTask() {
-    xTaskCreatePinnedToCore(getAPI, "Get Weather API", 4096, NULL, 1, NULL, 0);
-    xTaskCreatePinnedToCore(getAPILunar, "Get Lunar API", 4096, NULL, 1, NULL, 0);
-    xTaskCreatePinnedToCore(settingTimeFromLVGL, "Setting time from LVGL", 4096, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(getAPI, "Get Weather API", 8192, NULL, 1, &getAPI_handle, 0);
+    xTaskCreatePinnedToCore(lunar, "Caculate Lunar day", 4096, NULL, 1, &lunar_handle, 0);
     xTaskCreatePinnedToCore(connectWiFi, "Connect to WiFi", 4096, NULL, 2, NULL, 0);
     xTaskCreatePinnedToCore(scanWiFi, "Scan WiFi to LVGL", 4096, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(resync, "Resync API manually", 8096, NULL, 2, &resync_handle, 0);
 }
 
 void checkWiFi (lv_timer_t * timer) {
@@ -573,11 +617,13 @@ void checkWiFi (lv_timer_t * timer) {
         if (lv_obj_has_flag(ui_MoveToClock, LV_OBJ_FLAG_HIDDEN)) lv_obj_remove_flag(ui_MoveToClock, LV_OBJ_FLAG_HIDDEN);
         String ssid = WiFi.SSID();
         lv_label_set_text_fmt(ui_WiFiStatus, "WiFi: %s", ssid.c_str());
+        if (lv_obj_has_flag(ui_resync, LV_OBJ_FLAG_HIDDEN)) lv_obj_remove_flag(ui_resync, LV_OBJ_FLAG_HIDDEN);
     }
     else {
         if(lv_obj_has_flag(ui_SettingOption1, LV_OBJ_FLAG_HIDDEN)) lv_obj_remove_flag(ui_SettingOption1, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_SettingOption3, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(ui_MoveToClock, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(ui_resync, LV_OBJ_FLAG_HIDDEN);
 
         lv_label_set_text_fmt(ui_WiFiStatus, "WiFi: No connection");
         lv_label_set_text(ui_DailyTemp, "No info");
@@ -597,7 +643,7 @@ void updateWiFiList(void * user_data) {
 
 void setWeatherInfo(lv_timer_t * timer) {
     WeatherData weatherData;
-    while(xQueueReceive(WeatherHandle, &weatherData, 0) == pdTRUE) {
+    if(xQueueReceive(WeatherHandle, &weatherData, 0) == pdTRUE) {
         lv_label_set_text_fmt(ui_TempNow, "%.1f°C", weatherData.temp);
         lv_label_set_text_fmt(ui_DailyTemp, "%.1f - %.1f°C", weatherData.minTemp, weatherData.maxTemp);
         lv_label_set_text_fmt(ui_Humidity, "%d%%", weatherData.humid);
@@ -612,10 +658,13 @@ void update_clock(lv_timer_t * timer) {
         lv_label_set_text_fmt(ui_Hour, "%02d:%02d", time.tm_hour, time.tm_min);
         lv_label_set_text_fmt(ui_Second, "%02d", time.tm_sec);
         lv_label_set_text_fmt(ui_SolarDay, "%02d-%02d-%04d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
-        const char* weekdays[] = {"CN", "T2", "T3", "T4", "T5", "T6", "T7"};
+        const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         lv_label_set_text_fmt(ui_DOW, "%s", weekdays[time.tm_wday]);
         lv_calendar_set_today_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1, time.tm_mday);
         lv_calendar_set_showed_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1);
+        if (time.tm_hour == 0 && time.tm_min == 0 && time.tm_sec == 0) {
+            if (lunar_handle != NULL) xTaskNotifyGive(lunar_handle);
+        }
     }
 }
 
@@ -623,13 +672,12 @@ void update_lunar_callback (void * user_data){
     char * text = (char*)user_data;
     if (text) {
         lv_label_set_text(ui_LunarDay, text);
-        free(text);
     }
 }
 
 void lvglTimerCreate() {
     lv_timer_create(checkWiFi, 500, nullptr);
-    lv_timer_create(setWeatherInfo, 30*60*1000, nullptr);
+    lv_timer_create(setWeatherInfo, 5000, nullptr);
     lv_timer_create(update_clock, 1000, nullptr);
 }
 void lvgl_task(void * pvParameters) {

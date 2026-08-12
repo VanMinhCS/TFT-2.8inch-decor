@@ -32,8 +32,6 @@ void ui_init(void)
     lv_disp_set_theme(dispp, theme);
     ui_Welcome_screen_init();
     ui_WiFiSetting_screen_init();
-    ui_SettingTimeManually_screen_init();
-    ui_Calendar_screen_init();
     ui_Time_screen_init();
     ui_Keqing_screen_init();
     ui_Move_screen_init();
@@ -46,8 +44,6 @@ void ui_destroy(void)
 {
     ui_Welcome_screen_destroy();
     ui_WiFiSetting_screen_destroy();
-    ui_SettingTimeManually_screen_destroy();
-    ui_Calendar_screen_destroy();
     ui_Time_screen_destroy();
     ui_Keqing_screen_destroy();
     ui_Move_screen_destroy();
