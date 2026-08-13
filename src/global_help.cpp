@@ -658,7 +658,7 @@ void update_clock(lv_timer_t * timer) {
         lv_label_set_text_fmt(ui_Hour, "%02d:%02d", time.tm_hour, time.tm_min);
         lv_label_set_text_fmt(ui_Second, "%02d", time.tm_sec);
         lv_label_set_text_fmt(ui_SolarDay, "%02d-%02d-%04d", time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
-        const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        const char* weekdays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satuday"};
         lv_label_set_text_fmt(ui_DOW, "%s", weekdays[time.tm_wday]);
         lv_calendar_set_today_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1, time.tm_mday);
         lv_calendar_set_showed_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1);
