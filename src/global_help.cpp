@@ -647,8 +647,14 @@ void setWeatherInfo(lv_timer_t * timer) {
         lv_label_set_text_fmt(ui_TempNow, "%.1f°C", weatherData.temp);
         lv_label_set_text_fmt(ui_DailyTemp, "%.1f - %.1f°C", weatherData.minTemp, weatherData.maxTemp);
         lv_label_set_text_fmt(ui_Humidity, "%d%%", weatherData.humid);
-        if (weatherData.isDay) lv_image_set_src(ui_Day, &ui_img_84851999);
-        else lv_image_set_src(ui_Day, &ui_img_night_png);
+        if (weatherData.isDay) {
+            lv_image_set_src(ui_Day, &ui_img_84851999);
+            ui_theme_set(THEME_LIGHT);
+        }
+        else {
+            lv_image_set_src(ui_Day, &ui_img_night_png);
+            ui_theme_set(THEME_DARK);
+        }
     }
 }
 

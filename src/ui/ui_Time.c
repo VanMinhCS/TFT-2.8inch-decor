@@ -42,6 +42,10 @@ void ui_Time_screen_init(void)
 {
     ui_Time = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Time, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Time, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Time, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
 
     ui_WiFiStatus = lv_label_create(ui_Time);
     lv_obj_set_width(ui_WiFiStatus, LV_SIZE_CONTENT);   /// 1
@@ -49,8 +53,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_x(ui_WiFiStatus, 2);
     lv_obj_set_y(ui_WiFiStatus, 2);
     lv_label_set_text(ui_WiFiStatus, "WiFi: Thanh Le");
-    lv_obj_set_style_text_color(ui_WiFiStatus, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_WiFiStatus, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_WiFiStatus, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_WiFiStatus, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_align(ui_WiFiStatus, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_WiFiStatus, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -75,6 +81,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_HourPanel, -36);
     lv_obj_set_align(ui_HourPanel, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_HourPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_HourPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_HourPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_outline_color(ui_HourPanel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_HourPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_HourPanel, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -85,8 +95,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_height(ui_Hour, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Hour, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Hour, "20:00");
-    lv_obj_set_style_text_color(ui_Hour, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Hour, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_Hour, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_Hour, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_Hour, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Second = lv_label_create(ui_HourPanel);
@@ -96,8 +108,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_Second, 8);
     lv_obj_set_align(ui_Second, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Second, "00");
-    lv_obj_set_style_text_color(ui_Second, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Second, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_Second, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_Second, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_Second, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SolarPanel = lv_obj_create(ui_Time);
@@ -107,6 +121,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_SolarPanel, 73);
     lv_obj_set_align(ui_SolarPanel, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_SolarPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_SolarPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_SolarPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_outline_color(ui_SolarPanel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_SolarPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_SolarPanel, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -118,8 +136,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_x(ui_SolarLabel, -6);
     lv_obj_set_y(ui_SolarLabel, -6);
     lv_label_set_text(ui_SolarLabel, "Solar");
-    lv_obj_set_style_text_color(ui_SolarLabel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_SolarLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_SolarLabel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_SolarLabel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_SolarLabel, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SolarDay = lv_label_create(ui_SolarPanel);
@@ -127,8 +147,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_height(ui_SolarDay, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_SolarDay, LV_ALIGN_CENTER);
     lv_label_set_text(ui_SolarDay, "02-08-2026");
-    lv_obj_set_style_text_color(ui_SolarDay, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_SolarDay, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_SolarDay, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_SolarDay, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_SolarDay, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_DOW = lv_label_create(ui_SolarPanel);
@@ -138,8 +160,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_DOW, 6);
     lv_obj_set_align(ui_DOW, LV_ALIGN_BOTTOM_LEFT);
     lv_label_set_text(ui_DOW, "Sunday");
-    lv_obj_set_style_text_color(ui_DOW, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_DOW, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_DOW, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_DOW, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_align(ui_DOW, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_DOW, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -150,6 +174,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_LunarPanel, 73);
     lv_obj_set_align(ui_LunarPanel, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_LunarPanel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_LunarPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_LunarPanel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_bg_image_tiled(ui_LunarPanel, false, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_color(ui_LunarPanel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_LunarPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -162,8 +190,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_x(ui_LunarLabel, -6);
     lv_obj_set_y(ui_LunarLabel, -6);
     lv_label_set_text(ui_LunarLabel, "Lunar");
-    lv_obj_set_style_text_color(ui_LunarLabel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_LunarLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_LunarLabel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_LunarLabel, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_LunarLabel, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LunarDay = lv_label_create(ui_LunarPanel);
@@ -171,6 +201,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_height(ui_LunarDay, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_LunarDay, LV_ALIGN_CENTER);
     lv_label_set_text(ui_LunarDay, "20-06-2026");
+    ui_object_set_themeable_style_property(ui_LunarDay, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_LunarDay, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_LunarDay, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Weather = lv_obj_create(ui_Time);
@@ -180,6 +214,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_Weather, -36);
     lv_obj_set_align(ui_Weather, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Weather, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Weather, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Weather, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_bg_image_opa(ui_Weather, 220, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_color(ui_Weather, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_Weather, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -190,8 +228,8 @@ void ui_Time_screen_init(void)
     lv_image_set_src(ui_Temp, &ui_img_thermometer_png);
     lv_obj_set_width(ui_Temp, LV_SIZE_CONTENT);   /// 16
     lv_obj_set_height(ui_Temp, LV_SIZE_CONTENT);    /// 16
-    lv_obj_set_x(ui_Temp, -34);
-    lv_obj_set_y(ui_Temp, -41);
+    lv_obj_set_x(ui_Temp, -35);
+    lv_obj_set_y(ui_Temp, -44);
     lv_obj_set_align(ui_Temp, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Temp, LV_OBJ_FLAG_CLICKABLE);     /// Flags
     lv_obj_remove_flag(ui_Temp, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -202,7 +240,7 @@ void ui_Time_screen_init(void)
     lv_image_set_src(ui_HumidIcon, &ui_img_humidity_png);
     lv_obj_set_width(ui_HumidIcon, LV_SIZE_CONTENT);   /// 16
     lv_obj_set_height(ui_HumidIcon, LV_SIZE_CONTENT);    /// 16
-    lv_obj_set_x(ui_HumidIcon, -33);
+    lv_obj_set_x(ui_HumidIcon, -35);
     lv_obj_set_y(ui_HumidIcon, 8);
     lv_obj_set_align(ui_HumidIcon, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_HumidIcon, LV_OBJ_FLAG_CLICKABLE);     /// Flags
@@ -215,8 +253,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_DailyTemp, -24);
     lv_obj_set_align(ui_DailyTemp, LV_ALIGN_CENTER);
     lv_label_set_text(ui_DailyTemp, "25.3 - 32°C");
-    lv_obj_set_style_text_color(ui_DailyTemp, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_DailyTemp, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_DailyTemp, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_DailyTemp, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_DailyTemp, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Humidity = lv_label_create(ui_Weather);
@@ -238,8 +278,10 @@ void ui_Time_screen_init(void)
     lv_obj_set_y(ui_TempNow, -45);
     lv_obj_set_align(ui_TempNow, LV_ALIGN_CENTER);
     lv_label_set_text(ui_TempNow, "27.6°C");
-    lv_obj_set_style_text_color(ui_TempNow, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_TempNow, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_TempNow, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_TempNow, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
 
     ui_Day = lv_image_create(ui_Weather);
     lv_image_set_src(ui_Day, &ui_img_84851999);

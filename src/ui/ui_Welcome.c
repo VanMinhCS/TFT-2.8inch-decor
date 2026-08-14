@@ -50,6 +50,10 @@ void ui_Welcome_screen_init(void)
 {
     ui_Welcome = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Welcome, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Welcome, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Welcome, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
 
     ui_Panel2 = lv_obj_create(ui_Welcome);
     lv_obj_set_width(ui_Panel2, 240);
@@ -58,6 +62,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_y(ui_Panel2, -73);
     lv_obj_set_align(ui_Panel2, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Panel2, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel2, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_outline_color(ui_Panel2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_Panel2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_Panel2, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -72,6 +80,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_height(ui_Label11, 50);
     lv_obj_set_align(ui_Label11, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label11, "Welcome to my decor display");
+    ui_object_set_themeable_style_property(ui_Label11, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_Label11, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_align(ui_Label11, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label11, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -82,6 +94,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_y(ui_Panel3, -6);
     lv_obj_set_align(ui_Panel3, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Panel3, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel3, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_outline_color(ui_Panel3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_opa(ui_Panel3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_width(ui_Panel3, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -98,6 +114,10 @@ void ui_Welcome_screen_init(void)
     lv_obj_set_y(ui_Label12, -1);
     lv_obj_set_align(ui_Label12, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label12, "Author: VanMinhCS");
+    ui_object_set_themeable_style_property(ui_Label12, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
+                                           _ui_theme_color_Text);
+    ui_object_set_themeable_style_property(ui_Label12, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
+                                           _ui_theme_alpha_Text);
     lv_obj_set_style_text_font(ui_Label12, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_SettingOption1 = lv_button_create(ui_Welcome);

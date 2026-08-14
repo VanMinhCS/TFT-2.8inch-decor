@@ -32,6 +32,9 @@ static uint32_t last_key_time = 0;
 static uint32_t last_active_key = 0;
 static bool is_holding = false;
 
+#define THEME_LIGHT 0
+#define THEME_DARK  1
+
 // Screen
 extern TFT_eSPI tft;
 static const uint32_t screenWidth  = 320;
@@ -99,7 +102,6 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data);
 
 // Method for Core 0
 void getAPI(void * pvParameters);
-void getAPILunar(void * pvParameters);
 void lunar(void * pvParamerters);
 void connectWiFi(void * pvParameters);
 void scanWiFi(void * pvParameters);

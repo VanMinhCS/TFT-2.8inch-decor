@@ -21,13 +21,13 @@ extern lv_obj_t * ui_WiFiPass;
 extern void ui_event_ConnectButton(lv_event_t * e);
 extern lv_obj_t * ui_ConnectButton;
 extern lv_obj_t * ui_ConnectText;
-extern void ui_event_Keyboard1(lv_event_t * e);
-extern lv_obj_t * ui_Keyboard1;
 extern void ui_event_MoveToClock(lv_event_t * e);
 extern lv_obj_t * ui_MoveToClock;
 extern lv_obj_t * ui_Label8;
 extern void ui_event_BackToWelcome1(lv_event_t * e);
 extern lv_obj_t * ui_BackToWelcome1;
+extern void ui_event_Keyboard1(lv_event_t * e);
+extern lv_obj_t * ui_Keyboard1;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

@@ -4,6 +4,8 @@ SET(SOURCES ui_Welcome.c
     ui_Keqing.c
     ui_Move.c
     ui_CalendarDecor.c
+    ui_theme_manager.cpp
+    ui_themes.cpp
     ui.c
     ui_comp_hook.c
     ui_helpers.c

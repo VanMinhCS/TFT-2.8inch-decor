@@ -17,6 +17,10 @@ void ui_Keqing_screen_init(void)
 {
     ui_Keqing = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Keqing, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Keqing, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Keqing, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
 
     ui_Panel4 = lv_obj_create(ui_Keqing);
     lv_obj_set_width(ui_Panel4, 200);
@@ -25,12 +29,18 @@ void ui_Keqing_screen_init(void)
     lv_obj_set_y(ui_Panel4, 0);
     lv_obj_set_align(ui_Panel4, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Panel4, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel4, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_bg_image_src(ui_Panel4, &ui_img_e64e7b6136a1e0cb7f04b9ab829ff3ff_png, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Panel4, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_Panel4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_color(ui_Panel4, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_opa(ui_Panel4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_width(ui_Panel4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_Panel4, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel4, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_OPA,
+                                           _ui_theme_alpha_Background);
+    lv_obj_set_style_outline_width(ui_Panel4, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Panel5 = lv_obj_create(ui_Keqing);
@@ -40,10 +50,16 @@ void ui_Keqing_screen_init(void)
     lv_obj_set_y(ui_Panel5, -60);
     lv_obj_set_align(ui_Panel5, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Panel5, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel5, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_bg_image_src(ui_Panel5, &ui_img_bc5a74564f30248025888e7f7f8e175b_png, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_color(ui_Panel5, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_opa(ui_Panel5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_width(ui_Panel5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_Panel5, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel5, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_OPA,
+                                           _ui_theme_alpha_Background);
+    lv_obj_set_style_outline_width(ui_Panel5, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Panel6 = lv_obj_create(ui_Keqing);
@@ -53,9 +69,15 @@ void ui_Keqing_screen_init(void)
     lv_obj_set_y(ui_Panel6, 60);
     lv_obj_set_align(ui_Panel6, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_Panel6, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel6, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_bg_image_src(ui_Panel6, &ui_img_537571085, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_color(ui_Panel6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_outline_opa(ui_Panel6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(ui_Panel6, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_Panel6, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_OUTLINE_OPA,
+                                           _ui_theme_alpha_Background);
     lv_obj_set_style_outline_width(ui_Panel6, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_Panel6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 

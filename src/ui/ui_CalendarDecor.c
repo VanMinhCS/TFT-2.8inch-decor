@@ -15,6 +15,10 @@ void ui_CalendarDecor_screen_init(void)
 {
     ui_CalendarDecor = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_CalendarDecor, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_object_set_themeable_style_property(ui_CalendarDecor, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR,
+                                           _ui_theme_color_Background);
+    ui_object_set_themeable_style_property(ui_CalendarDecor, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA,
+                                           _ui_theme_alpha_Background);
 
     ui_CalendarD = lv_calendar_create(ui_CalendarDecor);
     lv_calendar_set_today_date(ui_CalendarD, 2026, 8, 2);
