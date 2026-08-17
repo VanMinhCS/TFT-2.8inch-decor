@@ -3,6 +3,7 @@
 
 QueueHandle_t WiFiInfo = NULL;
 QueueHandle_t WeatherHandle = NULL;
+QueueHandle_t isdayHandle = NULL;
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -32,6 +33,7 @@ void setup() {
 
   WiFiInfo = xQueueCreate(2, sizeof(WiFiData));
   WeatherHandle = xQueueCreate(2, sizeof(WeatherData));
+  isdayHandle = xQueueCreate(2, sizeof(sunData)*2);
   
   lv_indev_t * indev_joystick = lv_indev_create();
   lv_indev_set_type(indev_joystick, LV_INDEV_TYPE_KEYPAD);

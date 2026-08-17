@@ -20,6 +20,7 @@ extern lv_obj_t * ui_resync;
 extern lv_obj_t * ui_HourPanel;
 extern lv_obj_t * ui_Hour;
 extern lv_obj_t * ui_Second;
+extern lv_obj_t * ui_Day;
 extern lv_obj_t * ui_SolarPanel;
 extern lv_obj_t * ui_SolarLabel;
 extern lv_obj_t * ui_SolarDay;
@@ -28,13 +29,14 @@ extern lv_obj_t * ui_LunarPanel;
 extern lv_obj_t * ui_LunarLabel;
 extern lv_obj_t * ui_LunarDay;
 extern lv_obj_t * ui_Weather;
-extern lv_obj_t * ui_Temp;
-extern lv_obj_t * ui_HumidIcon;
 extern lv_obj_t * ui_DailyTemp;
 extern lv_obj_t * ui_Humidity;
 extern lv_obj_t * ui_TempNow;
-extern lv_obj_t * ui_Day;
+extern lv_obj_t * ui_Rain;
 extern lv_obj_t * ui_Night;
+extern lv_obj_t * ui_Image1;
+extern lv_obj_t * ui_HumidIcon;
+extern lv_obj_t * ui_Temp;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

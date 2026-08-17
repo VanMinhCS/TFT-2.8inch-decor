@@ -7,6 +7,7 @@
 #include <Preferences.h>
 #include <TFT_eSPI.h>
 #include <LunarCalendar.h>
+#include <sunset.h>
 #include <WiFi.h>
 // Joystick
 const int pinVRx = 8;
@@ -65,12 +66,11 @@ void ui_event_SubScreen_Loaded(lv_event_t * e);
 extern volatile bool request_wifi_scan;
 extern QueueHandle_t WiFiInfo; // use for WiFi info
 extern QueueHandle_t WeatherHandle; // use for weather get from API
+extern QueueHandle_t isdayHandle;
 extern TaskHandle_t getAPI_handle;
 extern TaskHandle_t resync_handle;
 extern TaskHandle_t lunar_handle;
-typedef struct {
-    int hour, minute, second;
-}timeData;
+extern TaskHandle_t isday_handle;
 
 typedef struct {
     char ssid[64];
@@ -86,13 +86,17 @@ typedef struct {
     int humid;
     float maxTemp;
     float minTemp;
-    bool isDay;
+    int rain;
 }WeatherData;
 
 typedef struct {
     char ssid_list[10240];
     int count;
 }WifiScanResult;
+
+typedef struct {
+    int sunrise_m, sunset_m;
+} sunData;
 
 // Method
 void my_disp_flush(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map);
@@ -106,6 +110,7 @@ void lunar(void * pvParamerters);
 void connectWiFi(void * pvParameters);
 void scanWiFi(void * pvParameters);
 void resync(void * pvParameters);
+void calculateSun(void * pvParameters);
 void createTask();
 
 // Method for lvgl (Core 1)
@@ -113,6 +118,7 @@ void checkWiFi(lv_timer_t * timer);
 void updateWiFiList(void * user_data);
 void setWeatherInfo(lv_timer_t * timer);
 void update_clock(lv_timer_t * timer);
+void change_theme(lv_timer_t * timer);
 void update_lunar_callback(void * user_data);
 void lvglTimerCreate();
 void lvgl_task(void *pvParameters);

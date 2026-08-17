@@ -5,10 +5,15 @@ bool is_in_widget = false;
 
 int current_screen_index = 2;
 
+static bool last_is_day = false;
+static sunData cached_sun = {0, 0};
+static bool has_sun_data = false;
+
 lv_group_t * input_group = nullptr;
 
 TaskHandle_t getAPI_handle = NULL;
 TaskHandle_t lunar_handle = NULL;
+TaskHandle_t isday_handle = NULL;
 
 volatile bool request_wifi_scan = false;
 lv_group_t * joystick_group = nullptr;
@@ -366,18 +371,12 @@ void my_joystick_read(lv_indev_t * indev_drv, lv_indev_data_t * data) {
 }
 
 void getAPI(void * pvParameters){
-    String url = "https://api.open-meteo.com/v1/forecast?latitude=10.823&longitude=106.6296&daily=temperature_2m_max,temperature_2m_min&models=best_match&current=relative_humidity_2m,temperature_2m,is_day&timezone=Asia%2FBangkok&forecast_days=1";
+    String url = "https://api.open-meteo.com/v1/forecast?latitude=10.80340110826354&longitude=106.71108143960556&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,relative_humidity_2m&timezone=Asia%2FBangkok&forecast_days=1";
     
     while (1){
         // Chờ notification hoặc timeout 30 phút
         // pdTRUE: xóa counter sau khi lấy (chỉ cần biết có notification)
         uint32_t notified = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(30 * 60 * 1000));
-        
-        if (notified > 0) {
-            Serial.println("[WEATHER] Được đánh thức bởi WiFi vừa kết nối!");
-        } else {
-            Serial.println("[WEATHER] Timeout 30 phút, kiểm tra thời tiết...");
-        }
 
         // Kiểm tra WiFi và gọi API
         if (WiFi.status() == WL_CONNECTED) {
@@ -394,17 +393,12 @@ void getAPI(void * pvParameters){
                     .humid = doc["current"]["relative_humidity_2m"],
                     .maxTemp = doc["daily"]["temperature_2m_max"][0],
                     .minTemp = doc["daily"]["temperature_2m_min"][0],
-                    .isDay = doc["current"]["is_day"]
+                    .rain = doc["daily"]["precipitation_probability_max"][0]
                 };
                 xQueueSend(WeatherHandle, &weatherData, portMAX_DELAY);
-                Serial.println("[WEATHER] Đã cập nhật dữ liệu thời tiết");
                 
-            } else {
-                Serial.printf("[WEATHER] Lỗi HTTP: %d\n", httpResponseCode);
             }
             http.end();
-        } else {
-            Serial.println("[WEATHER] Chưa có WiFi, bỏ qua lần này");
         }
     }
 }
@@ -533,7 +527,6 @@ void scanWiFi(void * pvParameters) {
             
             WifiScanResult * result = (WifiScanResult*)malloc(sizeof(WifiScanResult));
             if (result == NULL) {
-                Serial.println("Lỗi: Không đủ RAM để cấp phát!");
                 vTaskDelay(pdMS_TO_TICKS(1000));
                 continue;
             }
@@ -597,6 +590,26 @@ void resync(void * pvParameters) {
 
             if (getAPI_handle != NULL) xTaskNotifyGive(getAPI_handle);
             if (lunar_handle != NULL) xTaskNotifyGive(lunar_handle);
+            if (isday_handle != NULL) xTaskNotifyGive(isday_handle);
+        }
+    }
+}
+
+void calculateSun(void * pvParameters) {
+    SunSet sun;
+    sun.setPosition(10.8033, 106.711, 7);
+    while (1) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        struct tm time;
+        if (getLocalTime(&time)) {
+            sun.setCurrentDate(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday);
+            int sunrise = sun.calcSunrise();
+            int sunset = sun.calcSunset();
+            sunData sundata = {
+                .sunrise_m = sunrise, .sunset_m = sunset
+            };
+            xQueueSend(isdayHandle, &sundata, portMAX_DELAY);
+            // continue here
         }
     }
 }
@@ -606,7 +619,8 @@ void createTask() {
     xTaskCreatePinnedToCore(lunar, "Caculate Lunar day", 4096, NULL, 1, &lunar_handle, 0);
     xTaskCreatePinnedToCore(connectWiFi, "Connect to WiFi", 4096, NULL, 2, NULL, 0);
     xTaskCreatePinnedToCore(scanWiFi, "Scan WiFi to LVGL", 4096, NULL, 3, NULL, 0);
-    xTaskCreatePinnedToCore(resync, "Resync API manually", 8096, NULL, 2, &resync_handle, 0);
+    xTaskCreatePinnedToCore(resync, "Resync API manually", 8192, NULL, 2, &resync_handle, 0);
+    xTaskCreatePinnedToCore(calculateSun, "Calculate sun time", 4096, NULL, 1, &isday_handle, 0);
 }
 
 void checkWiFi (lv_timer_t * timer) {
@@ -647,14 +661,7 @@ void setWeatherInfo(lv_timer_t * timer) {
         lv_label_set_text_fmt(ui_TempNow, "%.1f°C", weatherData.temp);
         lv_label_set_text_fmt(ui_DailyTemp, "%.1f - %.1f°C", weatherData.minTemp, weatherData.maxTemp);
         lv_label_set_text_fmt(ui_Humidity, "%d%%", weatherData.humid);
-        if (weatherData.isDay) {
-            lv_image_set_src(ui_Day, &ui_img_84851999);
-            ui_theme_set(THEME_LIGHT);
-        }
-        else {
-            lv_image_set_src(ui_Day, &ui_img_night_png);
-            ui_theme_set(THEME_DARK);
-        }
+        lv_label_set_text_fmt(ui_Rain, "%d%%", weatherData.rain);
     }
 }
 
@@ -670,8 +677,29 @@ void update_clock(lv_timer_t * timer) {
         lv_calendar_set_showed_date(ui_CalendarD, time.tm_year+1900, time.tm_mon+1);
         if (time.tm_hour == 0 && time.tm_min == 0 && time.tm_sec == 0) {
             if (lunar_handle != NULL) xTaskNotifyGive(lunar_handle);
+            if (isday_handle != NULL) xTaskNotifyGive(isday_handle);
         }
+        
     }
+}
+
+void change_theme (lv_timer_t * timer) {
+    struct tm time;
+    sunData new_data;
+    if (xQueueReceive(isdayHandle, &new_data, 0) == pdTRUE) {
+        cached_sun = new_data;
+        has_sun_data = true;
+    }
+    
+    if (has_sun_data) {
+        getLocalTime(&time, 5);
+        int current_minute = time.tm_hour * 60 + time.tm_min;
+        bool is_day = (current_minute >= cached_sun.sunrise_m && current_minute <= cached_sun.sunset_m);
+        lv_image_set_src(ui_Day, is_day ? &ui_img_84851999 : &ui_img_night_png);
+        ui_theme_set(is_day ? THEME_LIGHT : THEME_DARK);
+        has_sun_data = false;
+    }
+    
 }
 
 void update_lunar_callback (void * user_data){ 
@@ -685,6 +713,7 @@ void lvglTimerCreate() {
     lv_timer_create(checkWiFi, 500, nullptr);
     lv_timer_create(setWeatherInfo, 5000, nullptr);
     lv_timer_create(update_clock, 1000, nullptr);
+    lv_timer_create(change_theme, 5000, nullptr);
 }
 void lvgl_task(void * pvParameters) {
     uint32_t last_tick = millis();

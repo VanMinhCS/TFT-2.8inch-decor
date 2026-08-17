@@ -11,7 +11,13 @@ const ui_theme_variable_t _ui_theme_alpha_Background[2] = {255, 255};
 
 const ui_theme_variable_t _ui_theme_color_Text[2] = {0x000000, 0xFFFFFF};
 const ui_theme_variable_t _ui_theme_alpha_Text[2] = {255, 255};
-uint8_t ui_theme_idx = UI_THEME_DARK;
+
+const ui_theme_variable_t _ui_theme_color_Rain[2] = {0x1565C0, 0x42A5F5};
+const ui_theme_variable_t _ui_theme_alpha_Rain[2] = {255, 255};
+
+const ui_theme_variable_t _ui_theme_color_Humid[2] = {0x2196F3, 0x64B5F6};
+const ui_theme_variable_t _ui_theme_alpha_Humid[2] = {255, 255};
+uint8_t ui_theme_idx = UI_THEME_DEFAULT;
 
 
 void ui_theme_set(uint8_t theme_idx)

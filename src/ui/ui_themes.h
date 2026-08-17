@@ -12,6 +12,8 @@ extern "C" {
 
 #define UI_THEME_COLOR_BACKGROUND 0
 #define UI_THEME_COLOR_TEXT 1
+#define UI_THEME_COLOR_RAIN 2
+#define UI_THEME_COLOR_HUMID 3
 
 #define UI_THEME_DEFAULT 0
 
@@ -22,6 +24,12 @@ extern const ui_theme_variable_t _ui_theme_alpha_Background[2];
 
 extern const ui_theme_variable_t _ui_theme_color_Text[2];
 extern const ui_theme_variable_t _ui_theme_alpha_Text[2];
+
+extern const ui_theme_variable_t _ui_theme_color_Rain[2];
+extern const ui_theme_variable_t _ui_theme_alpha_Rain[2];
+
+extern const ui_theme_variable_t _ui_theme_color_Humid[2];
+extern const ui_theme_variable_t _ui_theme_alpha_Humid[2];
 
 extern const uint32_t * ui_theme_colors[2];
 extern const uint8_t * ui_theme_alphas[2];

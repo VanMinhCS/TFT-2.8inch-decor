@@ -12,10 +12,11 @@ SET(SOURCES ui_Welcome.c
     ui_events.cpp
     ui_img_388382192.c
     ui_img_385938922.c
-    ui_img_thermometer_png.c
-    ui_img_humidity_png.c
     ui_img_84851999.c
     ui_img_night_png.c
+    ui_img_rain_png.c
+    ui_img_humidity_png.c
+    ui_img_thermometer_png.c
     ui_img_e64e7b6136a1e0cb7f04b9ab829ff3ff_png.c
     ui_img_bc5a74564f30248025888e7f7f8e175b_png.c
     ui_img_537571085.c)

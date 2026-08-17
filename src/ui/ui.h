@@ -46,10 +46,11 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_388382192);    // assets/left-arrow.png
 LV_IMG_DECLARE(ui_img_385938922);    // assets/refresh-arrow.png
-LV_IMG_DECLARE(ui_img_thermometer_png);    // assets/thermometer.png
-LV_IMG_DECLARE(ui_img_humidity_png);    // assets/humidity.png
 LV_IMG_DECLARE(ui_img_84851999);    // assets/day-mode.png
 LV_IMG_DECLARE(ui_img_night_png);    // assets/night.png
+LV_IMG_DECLARE(ui_img_rain_png);    // assets/rain.png
+LV_IMG_DECLARE(ui_img_humidity_png);    // assets/humidity.png
+LV_IMG_DECLARE(ui_img_thermometer_png);    // assets/thermometer.png
 LV_IMG_DECLARE(ui_img_e64e7b6136a1e0cb7f04b9ab829ff3ff_png);    // assets/e64e7b6136a1e0cb7f04b9ab829ff3ff.png
 LV_IMG_DECLARE(ui_img_bc5a74564f30248025888e7f7f8e175b_png);    // assets/bc5a74564f30248025888e7f7f8e175b.png
 LV_IMG_DECLARE(ui_img_537571085);    // assets/HPBD (Custom).png
