@@ -6,7 +6,7 @@ bool is_in_widget = false;
 int current_screen_index = 2;
 
 // static bool last_is_day = false;
-// static sunData cached_sun = {0, 0};
+static sunData cached_sun = {0, 0};
 // static bool has_sun_data = false;
 
 lv_group_t * input_group = nullptr;
@@ -687,15 +687,15 @@ void change_theme (lv_timer_t * timer) {
     struct tm time;
     sunData new_data;
     if (xQueueReceive(isdayHandle, &new_data, 0) == pdTRUE) {
-        // cached_sun = new_data;
+        cached_sun = new_data;
         
-        getLocalTime(&time, 5);
-        int current_minute = time.tm_hour * 60 + time.tm_min;
-        bool is_day = (current_minute >= new_data.sunrise_m && current_minute <= new_data.sunset_m);
-        lv_image_set_src(ui_Day, is_day ? &ui_img_84851999 : &ui_img_night_png);
-        ui_theme_set(is_day ? THEME_LIGHT : THEME_DARK);
         // has_sun_data = false;
     }
+    getLocalTime(&time, 5);
+    int current_minute = time.tm_hour * 60 + time.tm_min;
+    bool is_day = (current_minute >= cached_sun.sunrise_m && current_minute <= cached_sun.sunset_m);
+    lv_image_set_src(ui_Day, is_day ? &ui_img_84851999 : &ui_img_night_png);
+    ui_theme_set(is_day ? THEME_LIGHT : THEME_DARK);
     
 }
 
